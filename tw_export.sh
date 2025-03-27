@@ -1,5 +1,34 @@
 #!/bin/bash
 
+# Show help message
+show_help() {
+    echo "Usage: tw_export.sh [--help]"
+    echo
+    echo "Export Obsidian tasks to TaskWarrior compatible NDJSON format."
+    echo
+    echo "The script searches for markdown task items (- [ ]) in all .md files"
+    echo "and extracts task attributes like start date, end date, due date,"
+    echo "and task ID into a TaskWarrior import compatible NDJSON file (tasks.ndjson)."
+    echo
+    echo "Options:"
+    echo "  --help    Show this help message"
+    exit 0
+}
+
+# Parse command line arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --help) show_help ;;
+        *) echo "Unknown parameter: $1"; show_help ;;
+    esac
+    shift
+done
+
+convert_date() {
+  local input_date="$1"
+  echo "${input_date//-/}"
+}
+
 # Create or overwrite the output file
 output_file="tasks.ndjson"
 > "$output_file"
