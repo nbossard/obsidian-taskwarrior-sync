@@ -56,9 +56,12 @@ rg "^- \\[ \\] " --no-heading --line-number --with-filename --glob "*.md" | whil
   # Remove [id:: ...] from the description
   description=$(echo "$description" | sed -E 's/\[id:: [^]]+\]//')
 
+  # Remove tags #toto from the description
+  description=$(echo "$description" | sed -E 's/#[^ ]+//')
+  #
   # Trim any extra spaces
   description=$(echo "$description" | sed -E 's/^[[:space:]]+|[[:space:]]+$//')
-  echo "description is $description"
+  echo "cleaned description is \"$description\""
 
   # Extract the start date if present
   start=$(echo "$line" | rg -o "\[start:: [^]]+\]" | sed -E 's/\[start:: (.+)\]/\1/')
