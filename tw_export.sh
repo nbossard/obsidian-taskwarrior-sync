@@ -61,19 +61,25 @@ rg "^- \\[ \\] " --no-heading --line-number --with-filename --glob "*.md" | whil
   echo "description is $description"
 
   # Extract the start date if present
-  start=$(echo "$line" | rg -o "\[start:: [^\]]+\]" | sed -E 's/\[start:: (.+)\]/\1/')
+  start=$(echo "$line" | rg -o "\[start:: [^]]+\]" | sed -E 's/\[start:: (.+)\]/\1/')
   echo "found start : $start"
+  start=$(convert_date "$start")
+  echo "converted start : $start"
 
   # Extract the end date if present
-  end=$(echo "$line" | rg -o "\[end:: [^\]]+\]" | sed -E 's/\[end:: (.+)\]/\1/')
+  end=$(echo "$line" | rg -o "\[end:: [^]]+\]" | sed -E 's/\[end:: (.+)\]/\1/')
   echo "found end : $end"
+  end=$(convert_date "$end")
+  echo "converted start : $end"
 
   # Extract the due date if present
-  end=$(echo "$line" | rg -o "\[due:: [^\]]+\]" | sed -E 's/\[due:: (.+)\]/\1/')
+  due=$(echo "$line" | rg -o "\[due:: [^]]+\]" | sed -E 's/\[due:: (.+)\]/\1/')
   echo "found due : $due"
+  due=$(convert_date "$due")
+  echo "converted due : $due"
 
   # Extract the id if present
-  end=$(echo "$line" | rg -o "\[id:: [^\]]+\]" | sed -E 's/\[id:: (.+)\]/\1/')
+  id=$(echo "$line" | rg -o "\[id:: [^]]+\]" | sed -E 's/\[id:: (.+)\]/\1/')
   echo "found id : $id"
 
   # Generate JSON object
@@ -81,6 +87,7 @@ rg "^- \\[ \\] " --no-heading --line-number --with-filename --glob "*.md" | whil
   [ -n "$start" ] && json+=",\"start\":\"$start\""
   [ -n "$end" ] && json+=",\"end\":\"$end\""
   [ -n "$due" ] && json+=",\"due\":\"$due\""
+  [ -n "$id" ] && json+=",\"uuid\":\"$id\""
   json+="}"
 
   echo "$json" >> "$output_file"
