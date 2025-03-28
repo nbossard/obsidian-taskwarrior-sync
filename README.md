@@ -1,14 +1,31 @@
 # README
 
-This set of scripts is to synchronise the tasks between obsidian and taskwarrior.
+This set of scripts is to synchronise the tasks between tasks in your markdown files (added using obsidian tasks typically) and taskwarrior.
+It will extract tasks in markdown files, import them in taskwarrior, and later keep markdown files up-to-date when modified in taskwarrior.
 
-Technically : it is written in bash and parses directly the markdown files.
+Technically : it is written in bash and parses or modifies directly the markdown files without requiring obsidian. To keep track between original file and taskwarrior it relies on UUID that are added to tasks.
 
+For example in your markdown file a task like following is modified from :
+```markdown
+- [ ] feed the cat
+```
+to
 
+```markdown
+- [ ] feed the cat [id:: eb48e204-e8be-416b-857d-8154edbbd7ad]
+```
 
-External dependencies :
+and then when you mark it completed in taskwarrior, it is updated to
 
-- ripgrep
+```markdown
+- [x] feed the cat [id:: eb48e204-e8be-416b-857d-8154edbbd7ad]
+```
+
+## External dependencies :
+
+To work correctly it requires following external program to be available on your computer :
+
+- [ripgrep](https://github.com/BurntSushi/ripgrep), for speed
 - sed
 - awk
 
@@ -26,7 +43,8 @@ alias add_uuids="~/folder-you-cloned/obsidian-taskwarrior-sync/add_uuids.sh"
 
 ### hooks
 
-Create  a file named "on-modify.obsidian-sync" in folder "~/.task/hooks"
+Hooks are used when tasks are modified in taskwarrior to modify original markdown files they were extracted from.
+Create a file named "on-modify.obsidian-sync" in folder "~/.task/hooks"
 ```
 #!/bin/bash
 
