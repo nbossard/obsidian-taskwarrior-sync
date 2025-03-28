@@ -16,7 +16,7 @@ External dependencies :
 
 Git clone this repo and add aliases to bash scripts like following:
 ```bash
-alias tw_export="~/perso/obsidian-taskwarrior-sync/tw_export.sh"
+alias obsidian_export="~/perso/obsidian-taskwarrior-sync/obsidian_export.sh"
 alias add_uuids="~/perso/obsidian-taskwarrior-sync/add_uuids.sh"
 ```
 
@@ -36,7 +36,7 @@ steps:
 ## This will modify your markdown files.
 add_uuids
 # generate a file tasks.ndjson
-tw_export
+obsidian_export
 task import tasks.ndjson
 ```
 

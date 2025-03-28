@@ -10,7 +10,7 @@ fi
 
 # Show help message
 show_help() {
-    echo "Usage: tw_export.sh [--help] [--mask PATTERN] [--project NAME]"
+    echo "Usage: obsidian_export.sh [--help] [--mask PATTERN] [--project NAME]"
     echo
     echo "Export Obsidian tasks to TaskWarrior compatible NDJSON format."
     echo
