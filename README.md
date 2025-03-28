@@ -14,18 +14,31 @@ External dependencies :
 
 ## installation
 
+### create aliases
+
 Git clone this repo and add aliases to bash scripts like following:
+
 ```bash
-alias obsidian_export="~/perso/obsidian-taskwarrior-sync/obsidian_export.sh"
-alias add_uuids="~/perso/obsidian-taskwarrior-sync/add_uuids.sh"
+alias obsidian_import="~/folder-you-cloned/obsidian-taskwarrior-sync/obsidian_import.sh"
+alias obsidian_export="~/folder-you-cloned/obsidian-taskwarrior-sync/obsidian_export.sh"
+alias add_uuids="~/folder-you-cloned/obsidian-taskwarrior-sync/add_uuids.sh"
 ```
 
+### hooks
+
+Create  a file named "on-modify.obsidian-sync" in folder "~/.task/hooks"
+```
+#!/bin/bash
+
+read -r NEW
+~/folder-you-cloned/obsidian-taskwarrior-sync/obsidian_import.sh --task "$NEW"
+```
 
 ## usage
 
 ### import obsidian tasks into taskwarrior
 
-steps:
+typical usage steps:
 
 - adding uuids to obsidian tasks
 - generating import file
@@ -42,7 +55,7 @@ task import tasks.ndjson
 
 ### automatically update obsidian when taskwarrior tasks are updated
 
-Using hooks, WIP.
+Using obsidian hooks, script obsidian_import.sh is called automatically.
 
 ## reference documentations
 
