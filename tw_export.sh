@@ -2,23 +2,36 @@
 
 # Show help message
 show_help() {
-    echo "Usage: tw_export.sh [--help]"
+    echo "Usage: tw_export.sh [--help] [--mask PATTERN]"
     echo
     echo "Export Obsidian tasks to TaskWarrior compatible NDJSON format."
     echo
-    echo "The script searches for markdown task items (- [ ]) in all .md files"
+    echo "The script searches for markdown task items (- [ ]) in files matching the mask pattern"
     echo "and extracts task attributes like start date, end date, due date,"
     echo "and task ID into a TaskWarrior import compatible NDJSON file (tasks.ndjson)."
     echo
     echo "Options:"
-    echo "  --help    Show this help message"
+    echo "  --help           Show this help message"
+    echo "  --mask PATTERN   File pattern to search (default: *.md)"
     exit 0
 }
+
+# Default file mask
+file_mask="*.md"
 
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --help) show_help ;;
+        --mask)
+            shift
+            if [[ -n "$1" ]]; then
+                file_mask="$1"
+            else
+                echo "Error: --mask requires a pattern"
+                show_help
+            fi
+            ;;
         *) echo "Unknown parameter: $1"; show_help ;;
     esac
     shift
@@ -29,7 +42,8 @@ output_file="tasks.ndjson"
 > "$output_file"
 
 # Use ripgrep (rg) to search all files at once
-rg "^- \\[ \\] " --no-heading --line-number --with-filename --glob "*.md" | while IFS=: read -r file line_number line; do
+echo "calling ripgrep with : rg   --no-heading --line-number --with-filename \"^- \\[ \\] \" \"$file_mask\""
+rg --no-heading --line-number --with-filename "^- \\[ \\] "  "$file_mask" | while IFS=: read -r file line_number line; do
   echo "======================================================================"
   echo "scanning file $file"
   echo "scanning line $line"
