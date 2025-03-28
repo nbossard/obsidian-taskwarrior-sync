@@ -1,7 +1,45 @@
 #!/bin/bash
 
+show_help() {
+    echo "Usage: add_uuids.sh [OPTIONS]"
+    echo
+    echo "Automatically adds UUIDs to markdown tasks that don't have them."
+    echo "Searches for lines starting with '- [ ]' and adds [id:: uuid] if not present."
+    echo
+    echo "Options:"
+    echo "  --help              Show this help message and exit"
+    echo "  --mask PATTERN      File pattern to search (default: '*.md')"
+    echo
+    echo "Example:"
+    echo "  ./add_uuids.sh"
+    echo "  ./add_uuids.sh --mask '*.markdown'"
+    echo "  ./add_uuids.sh --help"
+}
+
+# Default file pattern
+file_pattern="**/*.md"
+
+# Parse command line arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --help) show_help; exit 0 ;;
+        --mask)
+            shift
+            if [[ -n "$1" ]]; then
+                file_pattern="$1"
+            else
+                echo "Error: --mask requires a pattern"
+                show_help
+                exit 1
+            fi
+            ;;
+        *) echo "Unknown parameter: $1"; show_help; exit 1 ;;
+    esac
+    shift
+done
+
 # Use ripgrep (rg) to search all files at once
-rg "^- \\[ \\] " --no-heading --line-number --with-filename --glob "*.md" | while IFS=: read -r file line_number line; do
+rg --no-heading --line-number --with-filename "^- \\[ \\] " $file_pattern | while IFS=: read -r file line_number line; do
   echo "======================================================================"
   echo "scanning file $file"
   echo "scanning line $line"
