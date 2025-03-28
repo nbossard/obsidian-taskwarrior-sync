@@ -1,8 +1,16 @@
 #!/bin/bash
 
+# Load environment variables from .env file if it exists
+if [ -f .env ]; then
+    echo "Loading configuration from .env file"
+    set -o allexport
+    source .env
+    set +o allexport
+fi
+
 # Show help message
 show_help() {
-    echo "Usage: tw_export.sh [--help] [--mask PATTERN]"
+    echo "Usage: tw_export.sh [--help] [--mask PATTERN] [--project NAME]"
     echo
     echo "Export Obsidian tasks to TaskWarrior compatible NDJSON format."
     echo
@@ -13,11 +21,17 @@ show_help() {
     echo "Options:"
     echo "  --help           Show this help message"
     echo "  --mask PATTERN   File pattern to search (default: *.md)"
+    echo "  --project NAME   Assign tasks to a specific project"
+    echo
+    echo "Environment Variables:"
+    echo "  OE_MASK         Alternative to --mask (command line takes precedence)"
+    echo "  OE_PROJECT      Alternative to --project (command line takes precedence)"
     exit 0
 }
 
-# Default file mask
-file_mask="*.md"
+# Set defaults from environment variables or fallback values
+file_mask="${OE_MASK:-*.md}"
+project_name="${OE_PROJECT:-}"
 
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
@@ -32,10 +46,28 @@ while [[ "$#" -gt 0 ]]; do
                 show_help
             fi
             ;;
+        --project)
+            shift
+            if [[ -n "$1" ]]; then
+                project_name="$1"
+            else
+                echo "Error: --project requires a name"
+                show_help
+            fi
+            ;;
         *) echo "Unknown parameter: $1"; show_help ;;
     esac
     shift
 done
+
+# Display current configuration
+echo "Current configuration:"
+echo "--------------------"
+echo "File mask: $file_mask"
+echo "Project: ${project_name:-<none>}"
+echo "Output file: tasks.ndjson"
+echo "--------------------"
+echo
 
 # Create or overwrite the output file
 output_file="tasks.ndjson"
@@ -94,6 +126,7 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  "$file_mask" | whil
   [ -n "$end" ] && json+=",\"end\":\"$end\""
   [ -n "$due" ] && json+=",\"due\":\"$due\""
   [ -n "$id" ] && json+=",\"uuid\":\"$id\""
+  [ -n "$project_name" ] && json+=",\"project\":\"$project_name\""
   json+="}"
 
   echo "$json" >> "$output_file"

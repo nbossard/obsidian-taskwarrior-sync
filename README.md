@@ -32,7 +32,8 @@ steps:
 - import file into taskwarrior
 
 ```bash
-## add uuids to all tasks
+## Add uuids to all tasks
+## This will modify your markdown files.
 add_uuids
 # generate a file tasks.ndjson
 tw_export
