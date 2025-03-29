@@ -124,8 +124,9 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  "$file_mask" | whil
   echo "found id : $id"
 
   # Extract all @ tags
-  at_tags=$(echo "$line" | grep -o '@[[:alnum:]]\+' | sed 's/@//' | tr '\n' ',' | sed 's/,$//')
-  echo "found @ tags: $at_tags"
+  # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
+  # at_tags=$(echo "$line" | grep -o '@[[:alnum:]]\+' | sed 's/@//' | tr '\n' ',' | sed 's/,$//')
+  # echo "found @ tags: $at_tags"
 
   # Extract all # tags
   hash_tags=$(echo "$line" | grep -o '#[[:alnum:]]\+' | sed 's/#//' | tr '\n' ',' | sed 's/,$//')
