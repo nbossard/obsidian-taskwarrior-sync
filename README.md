@@ -48,8 +48,10 @@ Hooks are used when tasks are modified in taskwarrior to modify original markdow
 Create a file named "on-modify.obsidian-sync" in folder "~/.task/hooks"
 ```
 #!/bin/bash
+read -r OLD
 read -r NEW
 ~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_import.sh --task "$NEW"
+echo "$NEW"
 ```
 
 ## usage
