@@ -10,12 +10,12 @@ fi
 
 # Show help message
 show_help() {
-    echo "Usage: obsidian_export.sh [--help] [--mask PATTERN] [--project NAME]"
+    echo "Usage: mtt_md_export.sh [--help] [--mask PATTERN] [--project NAME]"
     echo
-    echo "Export Obsidian tasks to TaskWarrior compatible NDJSON format."
+    echo "Export markdown tasks to TaskWarrior compatible NDJSON format."
     echo
     echo "The script searches for markdown task items (- [ ]) in files matching the mask pattern"
-    echo "and extracts task attributes like start date, end date, due date,"
+    echo "and extracts task attributes like start date, end date, due date,..."
     echo "and task ID into a TaskWarrior import compatible NDJSON file (tasks.ndjson)."
     echo
     echo "Options:"

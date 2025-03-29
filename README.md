@@ -28,6 +28,7 @@ To work correctly it requires following external program to be available on your
 - [ripgrep](https://github.com/BurntSushi/ripgrep), for speed
 - sed
 - awk
+- and of course [taskwarrior](https://taskwarrior.org/) v3 or more
 
 ## installation
 
@@ -36,9 +37,9 @@ To work correctly it requires following external program to be available on your
 Git clone this repo and add aliases to bash scripts like following:
 
 ```bash
-alias obsidian_import="~/folder-you-cloned/obsidian-taskwarrior-sync/obsidian_import.sh"
-alias obsidian_export="~/folder-you-cloned/obsidian-taskwarrior-sync/obsidian_export.sh"
-alias add_uuids="~/folder-you-cloned/obsidian-taskwarrior-sync/add_uuids.sh"
+alias mtt_md_import="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_import.sh"
+alias mtt_md_export="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_export.sh"
+alias mtt_md_add_uuids="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_add_uuids.sh"
 ```
 
 ### hooks
@@ -47,9 +48,8 @@ Hooks are used when tasks are modified in taskwarrior to modify original markdow
 Create a file named "on-modify.obsidian-sync" in folder "~/.task/hooks"
 ```
 #!/bin/bash
-
 read -r NEW
-~/folder-you-cloned/obsidian-taskwarrior-sync/obsidian_import.sh --task "$NEW"
+~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_import.sh --task "$NEW"
 ```
 
 ## usage
@@ -65,15 +65,15 @@ typical usage steps:
 ```bash
 ## Add uuids to all tasks
 ## This will modify your markdown files.
-add_uuids
+mtt_md_uuids
 # generate a file tasks.ndjson
-obsidian_export
+mtt_md_export
 task import tasks.ndjson
 ```
 
 ### automatically update obsidian when taskwarrior tasks are updated
 
-Using obsidian hooks, script obsidian_import.sh is called automatically.
+Using obsidian hooks, script mtt_md_import.sh is called automatically.
 
 ## reference documentations
 

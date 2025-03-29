@@ -1,10 +1,15 @@
 #!/bin/bash
 
 show_help() {
-    echo "Usage: add_uuids.sh [OPTIONS]"
+    echo "Usage: mtt_md_add_uuids.sh [OPTIONS]"
     echo
     echo "Automatically adds UUIDs to markdown tasks that don't have them."
     echo "Searches for lines starting with '- [ ]' and adds [id:: uuid] if not present."
+    echo
+    echo "For example will transform a line like :"
+    echo "- [ ] feed the cat"
+    echo "to"
+    echo "- [ ] feed the cat [id:: eb48e204-e8be-416b-857d-8154edbbd7ad]"
     echo
     echo "Options:"
     echo "  --help              Show this help message and exit"
@@ -12,7 +17,8 @@ show_help() {
     echo
     echo "Example:"
     echo "  ./add_uuids.sh"
-    echo "  ./add_uuids.sh --mask '*.markdown'"
+    echo "  ./add_uuids.sh --mask '*.md'"
+    echo "  ./add_uuids.sh --mask 'daily/2025-03-28.md'"
     echo "  ./add_uuids.sh --help"
 }
 

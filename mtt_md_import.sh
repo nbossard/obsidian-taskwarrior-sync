@@ -10,14 +10,20 @@ fi
 
 # Show help message
 show_help() {
-    echo "Usage: obsidian_import.sh [--help] --task JSON"
+    echo "Usage: mtt_md_import.sh [--help] --task JSON"
     echo
     echo "Import a TaskWarrior task (in JSON format) back to its Obsidian markdown file."
     echo "The script uses the annotation containing 'Source:' to locate the original file."
+    echo "And the UUID to modify the good task."
+    echo
+    echo "You tipically dont call this program directly, you let taskwarrior call it thought a hook. See doc."
     echo
     echo "Options:"
     echo "  --help       Show this help message"
     echo "  --task JSON  The task in JSON format (required)"
+    echo
+    echo "Sample call:"
+    echo "mtt_md_import --task '{\"id\":0,\"description\":\"feed the cat\",\"end\":\"20250328T213759Z\",\"entry\"::\"20250328T102249Z\",\"modified\":\"20250328T213759Z\",\"project\":\"paymetrics\",\"status\":\"completed\",\"uuid\":\"eb48e204-e8be-416b-857d-8154edbbd7ad\",\"annotations\":[{\"entry\":\"20250328T213742Z\",\"description\":\"Source: \/Users\/nbossard\/PilotageDistri\/business-server\/documentation\/Agenda\/2025-03-28.md\"}],\"tags\":[\"Nicolas\"],\"urgency\":4.4}'"
     exit 0
 }
 
