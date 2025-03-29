@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo
+echo "mtt - ------------ starting add UUIDs in markdown -----------------"
+echo
+
 show_help() {
     echo "Usage: mtt_md_add_uuids.sh [OPTIONS]"
     echo

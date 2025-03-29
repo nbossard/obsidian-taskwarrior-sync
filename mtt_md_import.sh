@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo
+echo "mtt - ------------ starting import to markdown -----------------"
+echo
+
 # Load environment variables from .env file if it exists
 if [ -f .env ]; then
     echo "mtt - Loading configuration from .env file"
@@ -58,15 +62,15 @@ echo "mtt - Extract source file path from annotations..."
 echo "mtt - Checking annotations structure..."
 annotations_exist=$(echo "$task_json" | jq 'has("annotations")')
 if [ "$annotations_exist" != "true" ]; then
-    echo "Error: Task JSON has no annotations field"
-    echo "Task JSON received: $task_json"
+    echo "mtt - Task JSON received: $task_json"
+    echo "mtt - Ignoring this task : Task JSON has no annotations field"
     exit 1
 fi
 
 source_file=$(echo "$task_json" | jq -r 'if .annotations then (.annotations[] | select(.description | startswith("Source:")) | .description) else empty end' | sed 's/^Source: //')
 
 if [ -z "$source_file" ]; then
-    echo "mtt - Error: No Source annotation found in task"
+    echo "mtt - Ignoring this task : No Source annotation found in task"
     echo "mtt - Task JSON received: $task_json"
     exit 1
 fi
