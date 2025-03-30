@@ -12,7 +12,7 @@ if [ -f .env ]; then
     set +o allexport
 fi
 
-# Show help message
+# Function to show help message
 show_help() {
     echo "Usage: mtt_md_import.sh [--help] --task JSON"
     echo
@@ -29,6 +29,16 @@ show_help() {
     echo "Sample call:"
     echo "mtt_md_import --task '{\"id\":0,\"description\":\"feed the cat\",\"end\":\"20250328T213759Z\",\"entry\"::\"20250328T102249Z\",\"modified\":\"20250328T213759Z\",\"project\":\"paymetrics\",\"status\":\"completed\",\"uuid\":\"eb48e204-e8be-416b-857d-8154edbbd7ad\",\"annotations\":[{\"entry\":\"20250328T213742Z\",\"description\":\"Source: \/Users\/nbossard\/PilotageDistri\/business-server\/documentation\/Agenda\/2025-03-28.md\"}],\"tags\":[\"Nicolas\"],\"urgency\":4.4}'"
     exit 0
+}
+
+# Function to convert TaskWarrior date format (20250329T125637Z)
+# to readable format (2025-03-29) suitable for obsidian "tasks" plugin
+format_date() {
+    local date_str="$1"
+    if [ -n "$date_str" ]; then
+        # Insert hyphens after year (pos 4) and month (pos 7)
+        echo "${date_str:0:4}-${date_str:4:2}-${date_str:6:2}"
+    fi
 }
 
 # Parse command line arguments
@@ -105,7 +115,7 @@ else
     updated_task_line="- [ ] $description"
 fi
 [ -n "$start_date" ] && updated_task_line+=" [start:: $start_date]"
-[ -n "$end_date" ] && updated_task_line+=" [end:: $end_date]"
+[ -n "$end_date" ] && updated_task_line+=" [completion:: $(format_date "$end_date")]"
 [ -n "$due_date" ] && updated_task_line+=" [due:: $due_date]"
 updated_task_line+="$formatted_tags"
 # uuid should be last for readability
