@@ -48,6 +48,7 @@ while [[ "$#" -gt 0 ]]; do
             else
                 echo "Error: --mask requires a pattern"
                 show_help
+                exit 1
             fi
             ;;
         --project)
@@ -79,7 +80,7 @@ output_file="tasks.ndjson"
 
 # Use ripgrep (rg) to search all files at once
 echo "calling ripgrep with : rg   --no-heading --line-number --with-filename \"^- \\[ \\] \" \"$file_mask\""
-rg --no-heading --line-number --with-filename "^- \\[ \\] "  "$file_mask" | while IFS=: read -r file line_number line; do
+rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while IFS=: read -r file line_number line; do
   echo "......................................................................"
   echo "scanning file $file"
   echo "scanning line $line"
