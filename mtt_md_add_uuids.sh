@@ -50,7 +50,7 @@ done
 
 # Use ripgrep (rg) to search all files at once
 rg --no-heading --line-number --with-filename "^- \\[ \\] " $file_pattern | while IFS=: read -r file line_number line; do
-  echo "======================================================================"
+  echo "......................................"
   echo "scanning file $file"
   echo "scanning line $line"
 

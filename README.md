@@ -1,6 +1,6 @@
 # README
 
-This set of scripts is to synchronise the tasks between tasks in your markdown files (added using obsidian tasks typically) and taskwarrior.
+This set of scripts is to synchronise the tasks between tasks in your markdown files (added using [obsidian tasks plugin](https://github.com/obsidian-tasks-group/obsidian-tasks) typically) and taskwarrior.
 It will extract tasks in markdown files, import them in taskwarrior, and later keep markdown files up-to-date when modified in taskwarrior.
 
 Technically : it is written in bash and parses or modifies directly the markdown files without requiring obsidian. To keep track between original file and taskwarrior it relies on UUID that are added to tasks.

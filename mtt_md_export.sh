@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo
+echo "mtt - ------------ starting markdown tasks export -----------------"
+echo
+#
 # Load environment variables from .env file if it exists
 if [ -f .env ]; then
     echo "Loading configuration from .env file"
@@ -62,11 +66,11 @@ done
 
 # Display current configuration
 echo "Current configuration:"
-echo "--------------------"
+echo "~~~~~~~~~~~~~~~~~~~~"
 echo "File mask: $file_mask"
 echo "Project: ${project_name:-<none>}"
 echo "Output file: tasks.ndjson"
-echo "--------------------"
+echo "~~~~~~~~~~~~~~~~~~~~"
 echo
 
 # Create or overwrite the output file
@@ -76,7 +80,7 @@ output_file="tasks.ndjson"
 # Use ripgrep (rg) to search all files at once
 echo "calling ripgrep with : rg   --no-heading --line-number --with-filename \"^- \\[ \\] \" \"$file_mask\""
 rg --no-heading --line-number --with-filename "^- \\[ \\] "  "$file_mask" | while IFS=: read -r file line_number line; do
-  echo "======================================================================"
+  echo "......................................................................"
   echo "scanning file $file"
   echo "scanning line $line"
   # Extract the task description
