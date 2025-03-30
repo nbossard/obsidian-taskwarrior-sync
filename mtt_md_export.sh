@@ -1,4 +1,5 @@
 #!/bin/bash
+# vim: set tabstop=4 shiftwidth=4 expandtab list:
 
 echo
 echo "mtt - ------------ starting markdown tasks export -----------------"
@@ -81,11 +82,11 @@ output_file="tasks.ndjson"
 # Use ripgrep (rg) to search all files at once
 echo "calling ripgrep with : rg   --no-heading --line-number --with-filename \"^- \\[ \\] \" \"$file_mask\""
 rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while IFS=: read -r file line_number line; do
-  echo "......................................................................"
-  echo "scanning file $file"
-  echo "scanning line $line"
-  # Extract the task description
-  description=$(echo "$line" | sed -E 's/^- \[ \] (.+)/\1/')
+echo "......................................................................"
+echo "scanning file $file"
+echo "scanning line $line"
+# Extract the task description
+description=$(echo "$line" | sed -E 's/^- \[ \] (.+)/\1/')
 
   # Remove [start:: ...] from the description
   description=$(echo "$description" | sed -E 's/\[start:: [^]]+\]//')
@@ -117,8 +118,8 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
   echo "found start : $start"
 
   # Extract the end date if present
-  end=$(echo "$line" | rg -o "\[end:: [^]]+\]" | sed -E 's/\[end:: (.+)\]/\1/')
-  echo "found end : $end"
+end=$(echo "$line" | rg -o "\[end:: [^]]+\]" | sed -E 's/\[end:: (.+)\]/\1/')
+echo "found end : $end"
 
   # Extract the due date if present
   due=$(echo "$line" | rg -o "\[due:: [^]]+\]" | sed -E 's/\[due:: (.+)\]/\1/')
@@ -140,16 +141,16 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
   # Combine all tags, removing duplicates
   all_tags=""
   if [ -n "$at_tags" ] || [ -n "$hash_tags" ]; then
-    # Combine tags with comma only if both are non-empty
-    combined_tags=""
-    if [ -n "$at_tags" ] && [ -n "$hash_tags" ]; then
-      combined_tags="${at_tags},${hash_tags}"
-    else
-      combined_tags="${at_tags}${hash_tags}"
-    fi
-    all_tags=$(echo "$combined_tags" | tr ',' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
-  fi
-  echo "combined tags: $all_tags"
+      # Combine tags with comma only if both are non-empty
+      combined_tags=""
+      if [ -n "$at_tags" ] && [ -n "$hash_tags" ]; then
+          combined_tags="${at_tags},${hash_tags}"
+      else
+          combined_tags="${at_tags}${hash_tags}"
+      fi
+      all_tags=$(echo "$combined_tags" | tr ',' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
+      fi
+      echo "combined tags: $all_tags"
 
   # Get absolute path of the source file
   abs_file_path=$(realpath "$file")

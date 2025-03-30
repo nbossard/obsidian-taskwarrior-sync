@@ -1,4 +1,5 @@
 #!/bin/bash
+# vim: set tabstop=4 shiftwidth=4 expandtab list:
 
 echo
 echo "mtt - ------------ starting add UUIDs in markdown -----------------"
@@ -50,14 +51,14 @@ done
 
 # Use ripgrep (rg) to search all files at once
 rg --no-heading --line-number --with-filename "^- \\[ \\] " $file_pattern | while IFS=: read -r file line_number line; do
-  echo "......................................"
-  echo "scanning file $file"
-  echo "scanning line $line"
+echo "......................................"
+echo "scanning file $file"
+echo "scanning line $line"
 
   # Check if line already has an ID
   if ! echo "$line" | grep -q "\[id::"; then
-    # Generate a new UUID
-    new_uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
+      # Generate a new UUID
+      new_uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
 
     # Create the new line with UUID
     new_line="${line} [id:: ${new_uuid}]"
@@ -66,12 +67,12 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] " $file_pattern | whil
 
     # Replace the line in the file using awk
     awk -v ln="$line_number" -v old="$line" -v new="$new_line" '
-      NR == ln {$0 = new; print; next}
-      {print}
+    NR == ln {$0 = new; print; next}
+    {print}
     ' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
 
     echo "Added UUID to line: $new_line"
-  else
+else
     echo "Line already has an ID, skipping"
   fi
 

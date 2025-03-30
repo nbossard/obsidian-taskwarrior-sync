@@ -1,4 +1,5 @@
 #!/bin/bash
+# vim: set tabstop=4 shiftwidth=4 expandtab list:
 
 echo
 echo "mtt - ============ starting sync ================="
