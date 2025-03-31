@@ -107,7 +107,8 @@ description=$(echo "$line" | sed -E 's/^- \[ \] (.+)/\1/')
   description=$(echo "$description" | sed -E 's/#[^ ]+//')
 
   # Remove tags @toto from the description
-  description=$(echo "$description" | sed -E 's/@[^ ]+//')
+  # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
+  # description=$(echo "$description" | sed -E 's/@[^ ]+//')
 
   # Trim any extra spaces
   description=$(echo "$description" | sed -E 's/^[[:space:]]+|[[:space:]]+$//')
