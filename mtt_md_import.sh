@@ -96,7 +96,8 @@ echo "mtt - Processing task for file: $source_file"
 # Extract task attributes
 description=$(echo "$task_json" | jq -r '.description')
 status=$(echo "$task_json" | jq -r '.status // empty')
-start_date=$(echo "$task_json" | jq -r '.start // empty')
+# note start in tasks is wait in taskwarrior
+start_date=$(echo "$task_json" | jq -r '.wait // empty')
 end_date=$(echo "$task_json" | jq -r '.end // empty')
 due_date=$(echo "$task_json" | jq -r '.due // empty')
 tags=$(echo "$task_json" | jq -r '.tags // empty | join(",")')

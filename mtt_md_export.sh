@@ -116,7 +116,7 @@ description=$(echo "$line" | sed -E 's/^- \[ \] (.+)/\1/')
 
   # Extract the start date if present
   start=$(echo "$line" | rg -o "\[start:: [^]]+\]" | sed -E 's/\[start:: (.+)\]/\1/')
-  echo "found start : $start"
+  echo "found start : $start, will be matched to \"wait\""
 
   # Extract the end date if present
 end=$(echo "$line" | rg -o "\[end:: [^]]+\]" | sed -E 's/\[end:: (.+)\]/\1/')
@@ -158,7 +158,8 @@ echo "found end : $end"
 
   # Generate JSON object
   json="{\"description\":\"$description\",\"status\":\"pending\""
-  [ -n "$start" ] && json+=",\"start\":\"$start\""
+  #  note, this is not a bug : obsidian tasks uses "start" while taskwarrior uses "wait"
+  [ -n "$start" ] && json+=",\"wait\":\"$start\""
   [ -n "$end" ] && json+=",\"end\":\"$end\""
   [ -n "$due" ] && json+=",\"due\":\"$due\""
   [ -n "$id" ] && json+=",\"uuid\":\"$id\""
