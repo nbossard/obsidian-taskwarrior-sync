@@ -112,14 +112,15 @@ fi
 
 # Build the updated task line
 if [ "$status" = "completed" ]; then
-  updated_task_line="- [x] $description"
+    updated_task_line="- [x] $description"
 else
-  updated_task_line="- [ ] $description"
+    updated_task_line="- [ ] $description"
 fi
-[ -n "$start_date" ] && updated_task_line+=" [start:: $start_date]"
-[ -n "$end_date" ] && updated_task_line+=" [completion:: $(format_date "$end_date")]"
-[ -n "$due_date" ] && updated_task_line+=" [due:: $due_date]"
+# tags should be before dates
 updated_task_line+="$formatted_tags"
+[ -n "$start_date" ] && updated_task_line+=" [start:: $(format_date "$start_date")]"
+[ -n "$end_date" ] && updated_task_line+=" [completion:: $(format_date "$end_date")]"
+[ -n "$due_date" ] && updated_task_line+=" [due:: $(format_date "$due_date")]"
 # uuid should be last for readability
 [ -n "$uuid" ] && updated_task_line+=" [id:: $uuid]"
 
