@@ -21,6 +21,27 @@ and then when you mark it completed in taskwarrior, it is updated to
 - [x] feed the cat [id:: eb48e204-e8be-416b-857d-8154edbbd7ad]
 ```
 
+Once imported in your taskwarrior, tasks will have annotation like :
+
+```text
+ID Age   Project    Description                                                                                                                                        Urg
+25  3d   perso      feed the cat                                                                                                        11.7
+                      2025-03-31 Source: /Users/nbossard/Agenda/2025-03-28.md
+```
+
+Note that the annotation can be opened easily using [taskopen](https://github.com/jschlatow/taskopen)
+
+Extract of config for a repo named business-server
+```rc
+[Actions]
+obsidianpro.target=annotations
+obsidianpro.labelregex=".*"
+obsidianpro.regex="^.*business-server(.*\\.md)"
+obsidianpro.command="open \"obsidian://open?vault=business-server&file=$LAST_MATCH\""
+obsidianpro.modes="batch,any,normal"
+
+``
+
 ## External dependencies :
 
 To work correctly it requires following external program to be available on your computer :
