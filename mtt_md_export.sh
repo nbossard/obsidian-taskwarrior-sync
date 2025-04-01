@@ -112,7 +112,8 @@ description=$(echo "$line" | sed -E 's/^- \[ \] (.+)/\1/')
 
   # Trim any extra spaces
   description=$(echo "$description" | sed -E 's/^[[:space:]]+|[[:space:]]+$//')
-  echo "cleaned description is \"$description\""
+  escaped_description=$(echo "$description" | sed 's/"/\\"/g')
+  echo "cleaned description is \"$escaped_description\""
 
   # Extract the start date if present
   start=$(echo "$line" | rg -o "\[start:: [^]]+\]" | sed -E 's/\[start:: (.+)\]/\1/')
@@ -157,7 +158,8 @@ echo "found end : $end"
   abs_file_path=$(realpath "$file")
 
   # Generate JSON object
-  json="{\"description\":\"$description\",\"status\":\"pending\""
+  # Escape double quotes in description for JSON
+  json="{\"description\":\"$escaped_description\",\"status\":\"pending\""
   #  note, this is not a bug : obsidian tasks uses "start" while taskwarrior uses "wait"
   [ -n "$start" ] && json+=",\"wait\":\"$start\""
   [ -n "$end" ] && json+=",\"end\":\"$end\""
