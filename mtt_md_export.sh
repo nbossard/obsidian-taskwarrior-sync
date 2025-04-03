@@ -82,95 +82,97 @@ output_file="tasks.ndjson"
 # Use ripgrep (rg) to search all files at once
 echo "calling ripgrep with : rg   --no-heading --line-number --with-filename \"^- \\[ \\] \" \"$file_mask\""
 rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while IFS=: read -r file line_number line; do
-echo "......................................................................"
-echo "scanning file $file"
-echo "scanning line $line"
-# Extract the task description
-description=$(echo "$line" | sed -E 's/^- \[ \] (.+)/\1/')
+    echo "......................................................................"
+    echo "scanning file $file"
+    echo "scanning line $line"
+    #  Extract the task description
+    description=$(echo "$line" | sed -E 's/^- \[ \] (.+)/\1/')
 
-  # Remove [start:: ...] from the description
-  description=$(echo "$description" | sed -E 's/\[start:: [^]]+\]//')
+    # Remove [start:: ...] from the description
+    description=$(echo "$description" | sed -E 's/\[start:: [^]]+\]//')
 
-  # Remove [end:: ...] from the description
-  description=$(echo "$description" | sed -E 's/\[end:: [^]]+\]//')
+    # Remove [end:: ...] from the description
+    description=$(echo "$description" | sed -E 's/\[end:: [^]]+\]//')
 
-  # Remove [end:: ...] from the description
-  description=$(echo "$description" | sed -E 's/\[end:: [^]]+\]//')
+    # Remove [end:: ...] from the description
+    description=$(echo "$description" | sed -E 's/\[end:: [^]]+\]//')
 
-  # Remove [due:: ...] from the description
-  description=$(echo "$description" | sed -E 's/\[due:: [^]]+\]//')
+    # Remove [due:: ...] from the description
+    description=$(echo "$description" | sed -E 's/\[due:: [^]]+\]//')
 
-  # Remove [id:: ...] from the description
-  description=$(echo "$description" | sed -E 's/\[id:: [^]]+\]//')
+    # Remove [id:: ...] from the description
+    description=$(echo "$description" | sed -E 's/\[id:: [^]]+\]//')
 
-  # Remove tags #toto from the description
-  description=$(echo "$description" | sed -E 's/#[^ ]+//')
+    # Remove tags #toto from the description
+    description=$(echo "$description" | sed -E 's/#[^ ]+//')
 
-  # Remove tags @toto from the description
-  # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
-  # description=$(echo "$description" | sed -E 's/@[^ ]+//')
+    # Remove tags @toto from the description
+    # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
+    # description=$(echo "$description" | sed -E 's/@[^ ]+//')
 
-  # Trim any extra spaces
-  description=$(echo "$description" | sed -E 's/^[[:space:]]+|[[:space:]]+$//')
-  escaped_description=$(echo "$description" | sed 's/"/\\"/g')
-  echo "cleaned description is \"$escaped_description\""
+    # Trim any extra spaces
+    description=$(echo "$description" | sed -E 's/^[[:space:]]+|[[:space:]]+$//')
 
-  # Extract the start date if present
-  start=$(echo "$line" | rg -o "\[start:: [^]]+\]" | sed -E 's/\[start:: (.+)\]/\1/')
-  echo "found start : $start, will be matched to \"wait\""
+    # escape doubles quotes "
+    escaped_description=$(echo "$description" | sed 's/"/\\"/g')
+    echo "cleaned description is \"$escaped_description\""
 
-  # Extract the end date if present
-end=$(echo "$line" | rg -o "\[end:: [^]]+\]" | sed -E 's/\[end:: (.+)\]/\1/')
-echo "found end : $end"
+    # Extract the start date if present
+    start=$(echo "$line" | rg -o "\[start:: [^]]+\]" | sed -E 's/\[start:: (.+)\]/\1/')
+    echo "found start : $start, will be matched to \"wait\""
 
-  # Extract the due date if present
-  due=$(echo "$line" | rg -o "\[due:: [^]]+\]" | sed -E 's/\[due:: (.+)\]/\1/')
-  echo "found due : $due"
+    # Extract the end date if present
+    end=$(echo "$line" | rg -o "\[end:: [^]]+\]" | sed -E 's/\[end:: (.+)\]/\1/')
+    echo "found end : $end"
 
-  # Extract the id if present
-  id=$(echo "$line" | rg -o "\[id:: [^]]+\]" | sed -E 's/\[id:: (.+)\]/\1/')
-  echo "found id : $id"
+    # Extract the due date if present
+    due=$(echo "$line" | rg -o "\[due:: [^]]+\]" | sed -E 's/\[due:: (.+)\]/\1/')
+    echo "found due : $due"
 
-  # Extract all @ tags
-  # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
-  # at_tags=$(echo "$line" | grep -o '@[[:alnum:]]\+' | sed 's/@//' | tr '\n' ',' | sed 's/,$//')
-  # echo "found @ tags: $at_tags"
+    # Extract the id if present
+    id=$(echo "$line" | rg -o "\[id:: [^]]+\]" | sed -E 's/\[id:: (.+)\]/\1/')
+    echo "found id : $id"
 
-  # Extract all # tags
-  hash_tags=$(echo "$line" | grep -o '#[[:alnum:]]\+' | sed 's/#//' | tr '\n' ',' | sed 's/,$//')
-  echo "found # tags: $hash_tags"
+    # Extract all @ tags
+    # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
+    # at_tags=$(echo "$line" | grep -o '@[[:alnum:]]\+' | sed 's/@//' | tr '\n' ',' | sed 's/,$//')
+    # echo "found @ tags: $at_tags"
 
-  # Combine all tags, removing duplicates
-  all_tags=""
-  if [ -n "$at_tags" ] || [ -n "$hash_tags" ]; then
-      # Combine tags with comma only if both are non-empty
-      combined_tags=""
-      if [ -n "$at_tags" ] && [ -n "$hash_tags" ]; then
-          combined_tags="${at_tags},${hash_tags}"
-      else
-          combined_tags="${at_tags}${hash_tags}"
-      fi
-      all_tags=$(echo "$combined_tags" | tr ',' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
-      fi
-      echo "combined tags: $all_tags"
+    # Extract all # tags
+    hash_tags=$(echo "$line" | grep -o '#[[:alnum:]]\+' | sed 's/#//' | tr '\n' ',' | sed 's/,$//')
+    echo "found # tags: $hash_tags"
 
-  # Get absolute path of the source file
-  abs_file_path=$(realpath "$file")
+    # Combine all tags, removing duplicates
+    all_tags=""
+    if [ -n "$at_tags" ] || [ -n "$hash_tags" ]; then
+        # Combine tags with comma only if both are non-empty
+        combined_tags=""
+        if [ -n "$at_tags" ] && [ -n "$hash_tags" ]; then
+            combined_tags="${at_tags},${hash_tags}"
+        else
+            combined_tags="${at_tags}${hash_tags}"
+        fi
+        all_tags=$(echo "$combined_tags" | tr ',' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
+    fi
+    echo "combined tags: $all_tags"
 
-  # Generate JSON object
-  # Escape double quotes in description for JSON
-  json="{\"description\":\"$escaped_description\",\"status\":\"pending\""
-  #  note, this is not a bug : obsidian tasks uses "start" while taskwarrior uses "wait"
-  [ -n "$start" ] && json+=",\"wait\":\"$start\""
-  [ -n "$end" ] && json+=",\"end\":\"$end\""
-  [ -n "$due" ] && json+=",\"due\":\"$due\""
-  [ -n "$id" ] && json+=",\"uuid\":\"$id\""
-  [ -n "$project_name" ] && json+=",\"project\":\"$project_name\""
-  [ -n "$all_tags" ] && json+=",\"tags\":[\"$(echo "$all_tags" | sed 's/,/\",\"/g')\"]"
-  json+=",\"annotations\":[{\"description\":\"Source: $abs_file_path\"}]"
-  json+="}"
+    # Get absolute path of the source file
+    abs_file_path=$(realpath "$file")
 
-  echo "$json" >> "$output_file"
+    # Generate JSON object
+    # Escape double quotes in description for JSON
+    json="{\"description\":\"$escaped_description\",\"status\":\"pending\""
+    #  note, this is not a bug : obsidian tasks uses "start" while taskwarrior uses "wait"
+    [ -n "$start" ] && json+=",\"wait\":\"$start\""
+    [ -n "$end" ] && json+=",\"end\":\"$end\""
+    [ -n "$due" ] && json+=",\"due\":\"$due\""
+    [ -n "$id" ] && json+=",\"uuid\":\"$id\""
+    [ -n "$project_name" ] && json+=",\"project\":\"$project_name\""
+    [ -n "$all_tags" ] && json+=",\"tags\":[\"$(echo "$all_tags" | sed 's/,/\",\"/g')\"]"
+    json+=",\"annotations\":[{\"description\":\"Source: $abs_file_path\"}]"
+    json+="}"
+
+    echo "$json" >> "$output_file"
 done
 
 echo "Tasks extracted to $output_file"
