@@ -119,19 +119,27 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
 
     # Extract the start date if present
     start=$(echo "$line" | rg -o "\[start:: [^]]+\]" | sed -E 's/\[start:: (.+)\]/\1/')
-    echo "found start : $start, will be matched to \"wait\""
+    if [ -n "$start" ]; then
+        echo "found start : $start, will be matched to \"wait\""
+    fi
 
     # Extract the end date if present
     end=$(echo "$line" | rg -o "\[end:: [^]]+\]" | sed -E 's/\[end:: (.+)\]/\1/')
-    echo "found end : $end"
+    if [ -n "$end" ]; then
+        echo "found end : $end"
+    fi
 
     # Extract the due date if present
     due=$(echo "$line" | rg -o "\[due:: [^]]+\]" | sed -E 's/\[due:: (.+)\]/\1/')
-    echo "found due : $due"
+    if [ -n "$due" ]; then
+        echo "found due : $due"
+    fi
 
     # Extract the id if present
     id=$(echo "$line" | rg -o "\[id:: [^]]+\]" | sed -E 's/\[id:: (.+)\]/\1/')
-    echo "found id : $id"
+    if [ -n "$id" ]; then
+        echo "found id : $id"
+    fi
 
     # Extract all @ tags
     # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
@@ -140,7 +148,9 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
 
     # Extract all # tags
     hash_tags=$(echo "$line" | grep -o '#[[:alnum:]]\+' | sed 's/#//' | tr '\n' ',' | sed 's/,$//')
-    echo "found # tags: $hash_tags"
+    if [ -n "$hash_tags" ]; then
+        echo "found # tags: $hash_tags"
+    fi
 
     # Combine all tags, removing duplicates
     all_tags=""
@@ -154,7 +164,9 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
         fi
         all_tags=$(echo "$combined_tags" | tr ',' '\n' | sort -u | tr '\n' ',' | sed 's/,$//')
     fi
-    echo "combined tags: $all_tags"
+    if [ -n "$all_tags" ]; then
+        echo "combined tags: $all_tags"
+    fi
 
     # Get absolute path of the source file
     abs_file_path=$(realpath "$file")
@@ -173,6 +185,8 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
     json+="}"
 
     echo "$json" >> "$output_file"
+    echo "......................................................................"
 done
 
 echo "Tasks extracted to $output_file"
+echo "mtt - ------------ finished markdown tasks export -----------------"
