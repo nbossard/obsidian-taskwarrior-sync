@@ -52,4 +52,5 @@ else
     ~/perso/obsidian-taskwarrior-sync/mtt_md_export.sh
 fi
 
+echo
 task import tasks.ndjson
