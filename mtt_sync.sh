@@ -11,9 +11,10 @@ show_help() {
     echo "Synchronizes tasks between Markdown files and TaskWarrior."
     echo
     echo "Options:"
-    echo "  --help        Show this help message"
-    echo "  --mask PATTERN  Specify a file pattern to filter markdown files"
-    echo "                  Example: --mask \"*.md\" or --mask \"tasks/*.md\""
+    echo "  --help            Show this help message"
+    echo "  --mask PATTERN    Specify a file pattern to filter markdown files"
+    echo "                      Example: --mask \"*.md\" or --mask \"tasks/*.md\""
+    echo "  --project NAME   Assign tasks to a specific project"
     echo
     echo "Description:"
     echo "  This script performs the following operations:"
@@ -39,18 +40,33 @@ while [[ "$#" -gt 0 ]]; do
                 exit 1
             fi
             ;;
+        --project)
+            shift
+            if [[ -n "$1" ]]; then
+                project_name="$1"
+            else
+                echo "Error: --project requires a name"
+                show_help
+                exit 1
+            fi
+            ;;
         *) echo "Unknown parameter: $1"; show_help; exit 1 ;;
     esac
     shift
 done
 
-if [ -n "$file_pattern" ]; then
-    ~/perso/obsidian-taskwarrior-sync/mtt_md_add_uuids.sh --mask "$file_pattern"
-    ~/perso/obsidian-taskwarrior-sync/mtt_md_export.sh --mask "$file_pattern"
-else
-    ~/perso/obsidian-taskwarrior-sync/mtt_md_add_uuids.sh
-    ~/perso/obsidian-taskwarrior-sync/mtt_md_export.sh
-fi
+# Build command arguments for mtt_md_add_uuids.sh (only needs mask)
+uuid_args=()
+[ -n "$file_pattern" ] && uuid_args+=(--mask "$file_pattern")
+
+# Build command arguments for mtt_md_export.sh (needs both mask and project)
+export_args=()
+[ -n "$file_pattern" ] && export_args+=(--mask "$file_pattern")
+[ -n "$project_name" ] && export_args+=(--project "$project_name")
+
+# Execute scripts with their respective arguments
+~/perso/obsidian-taskwarrior-sync/mtt_md_add_uuids.sh "${uuid_args[@]:-}"
+~/perso/obsidian-taskwarrior-sync/mtt_md_export.sh "${export_args[@]:-}"
 
 echo
 task import tasks.ndjson
