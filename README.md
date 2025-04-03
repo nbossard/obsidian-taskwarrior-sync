@@ -39,8 +39,7 @@ obsidianpro.labelregex=".*"
 obsidianpro.regex="^.*business-server(.*\\.md)"
 obsidianpro.command="open \"obsidian://open?vault=business-server&file=$LAST_MATCH\""
 obsidianpro.modes="batch,any,normal"
-
-``
+```
 
 ## External dependencies :
 
@@ -61,6 +60,7 @@ Git clone this repo and add aliases to bash scripts like following:
 alias mtt_md_import="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_import.sh"
 alias mtt_md_export="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_export.sh"
 alias mtt_md_add_uuids="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_add_uuids.sh"
+alias mtt_sync="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_sync.sh"
 ```
 
 ### hooks
