@@ -98,6 +98,13 @@ task import tasks.ndjson
 
 Using obsidian hooks, script mtt_md_import.sh is called automatically.
 
+## conversion choices
+
+| markdown task | taskwarrior |
+| ------------- | ----------- |
+| start         | wait        |
+| #toto         | tag "toto"  |
+
 ## reference documentations
 
 taskwarrior import format : <https://github.com/GothenburgBitFactory/taskwarrior/blob/develop/doc/devel/rfcs/task.md>
