@@ -73,19 +73,17 @@ echo "mtt - Extract source file path from annotations..."
 echo "mtt - Checking annotations structure..."
 annotations_exist=$(echo "$task_json" | jq 'has("annotations")')
 if [ "$annotations_exist" != "true" ]; then
-    echo "mtt - Task JSON received: $task_json"
     echo "mtt - 🤷 Ignoring this task : Task JSON has no annotations field"
     echo "mtt - ----------------------------------------------------------"
-    exit 1
+    exit 0
 fi
 
 source_file=$(echo "$task_json" | jq -r 'if .annotations then (.annotations[] | select(.description | startswith("Source:")) | .description) else empty end' | sed 's/^Source: //')
 
 if [ -z "$source_file" ]; then
-    echo "mtt - Task JSON received: $task_json"
     echo "mtt - 🤷 Ignoring this task : No Source annotation found in task"
     echo "mtt - ----------------------------------------------------------"
-    exit 1
+    exit 0
 fi
 
 if [ ! -f "$source_file" ]; then
