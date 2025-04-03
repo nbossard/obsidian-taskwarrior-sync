@@ -1,5 +1,30 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # vim: set tabstop=4 shiftwidth=4 expandtab list:
+
+# Store mappings directly in temporary file
+store_mapping() {
+    local short_id="$1"
+    local uuid="$2"
+    echo "$short_id:$uuid" >> /tmp/id_mappings.tmp
+}
+
+# Function to get UUID for a short_id
+get_uuid_for_short_id() {
+    local short_id="$1"
+    if [[ -f /tmp/id_mappings.tmp ]]; then
+        awk -F: -v sid="$short_id" '$1 == sid {print $2}' /tmp/id_mappings.tmp
+    fi
+}
+
+# Function to check if a short_id exists
+has_mapping() {
+    local short_id="$1"
+    if [[ -f /tmp/id_mappings.tmp ]]; then
+        grep -q "^${short_id}:" /tmp/id_mappings.tmp
+        return $?
+    fi
+    return 1
+}
 
 echo
 echo "mtt - ------------ starting add UUIDs in markdown -----------------"
@@ -49,33 +74,74 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-# Use ripgrep (rg) to search all files at once
+# First pass: build mapping of short IDs to UUIDs
+echo "First pass: Building mapping of short IDs to UUIDs..."
+echo "Searching for short IDs with pattern: \\[id:: [a-z0-9]{6}\\]"
+rg --no-heading --line-number --with-filename "\\[id:: [a-z0-9]{6}\\]" $file_pattern | while IFS=: read -r file line_number line; do
+    echo "Found line with short ID: $line"
+    # Extract the short ID using regex
+    if [[ $line =~ \[id::\ ([a-z0-9]{6})\] ]]; then
+        short_id="${BASH_REMATCH[1]}"
+        new_uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
+        store_mapping "$short_id" "$new_uuid"
+        echo "Mapping short ID $short_id to UUID $new_uuid"
+    fi
+done
+
+# Second pass: Update all references first
+if [[ -f /tmp/id_mappings.tmp ]]; then
+    echo "Updating references..."
+    while IFS=: read -r short_id uuid; do
+        echo "Updating references: $short_id -> $uuid"
+        rg --files-with-matches "\[dependsOn:: $short_id\]" $file_pattern | while read -r file; do
+            echo "Updating references in $file"
+            sed -i.bak "s/\[dependsOn:: $short_id\]/[dependsOn:: $uuid]/g" "$file"
+            rm -f "${file}.bak"
+        done
+    done < /tmp/id_mappings.tmp
+
+    # Third pass: Update the actual IDs
+    echo "Updating task IDs..."
+    while IFS=: read -r short_id uuid; do
+        echo "Updating ID: $short_id -> $uuid"
+        rg --files-with-matches "\[id:: $short_id\]" $file_pattern | while read -r file; do
+            echo "Updating ID in $file"
+            sed -i.bak "s/\[id:: $short_id\]/[id:: $uuid]/g" "$file"
+            rm -f "${file}.bak"
+        done
+    done < /tmp/id_mappings.tmp
+fi
+
+# Clean up temporary file
+rm -f /tmp/id_mappings.tmp
+
+# Fourth pass: Add UUIDs to tasks without any ID
 rg --no-heading --line-number --with-filename "^- \\[ \\] " $file_pattern | while IFS=: read -r file line_number line; do
-echo "......................................"
-echo "scanning file $file"
-echo "scanning line $line"
+    echo "......................................"
+    echo "scanning file $file"
+    echo "scanning line $line"
 
-  # Check if line already has an ID
-  if ! echo "$line" | grep -q "\[id::"; then
-      # Generate a new UUID
-      new_uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
+    # Check if line already has an ID
+    if ! echo "$line" | grep -q "\[id::"; then
+        # Generate a new UUID
+        new_uuid=$(uuidgen | tr '[:upper:]' '[:lower:]')
 
-    # Create the new line with UUID
-    new_line="${line} [id:: ${new_uuid}]"
+        # Create the new line with UUID
+        new_line="${line} [id:: ${new_uuid}]"
 
-    echo "new line is : $new_line"
+        echo "new line is : $new_line"
 
-    # Replace the line in the file using awk
-    awk -v ln="$line_number" -v old="$line" -v new="$new_line" '
-    NR == ln {$0 = new; print; next}
-    {print}
-    ' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
+        # Replace the line in the file using awk
+        awk -v ln="$line_number" -v old="$line" -v new="$new_line" '
+            NR == ln {$0 = new; print; next}
+            {print}
+        ' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
 
-    echo "Added UUID to line: $new_line"
-else
-    echo "Line already has an ID, skipping"
-  fi
-
+        echo "Added UUID to line: $new_line"
+    else
+        echo "Line already has an ID, skipping"
+    fi
+    echo "......................................"
 done
 
 echo "UUID addition complete"
