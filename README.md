@@ -1,5 +1,7 @@
 # README
 
+![](images/welcome_image.webp)
+
 This set of scripts is to synchronise the tasks between tasks in your markdown files (added using [obsidian tasks plugin](https://github.com/obsidian-tasks-group/obsidian-tasks) typically) and taskwarrior.
 It will extract tasks in markdown files, import them in taskwarrior, and later keep markdown files up-to-date when modified in taskwarrior.
 
