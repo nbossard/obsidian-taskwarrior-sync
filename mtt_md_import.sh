@@ -1,6 +1,12 @@
 #!/bin/bash
 # vim: set tabstop=4 shiftwidth=4 expandtab list:
 
+# Exit codes
+readonly EXIT_MISSING_ARGS=1
+readonly EXIT_SOURCE_FILE_NOT_FOUND=2
+readonly EXIT_IGNORED_NO_ANNOTATIONS=0  # Not an error, just skipping
+readonly EXIT_IGNORED_NO_SOURCE=0       # Not an error, just skipping
+
 echo
 echo "mtt - ------------ starting import to markdown -----------------"
 echo
@@ -66,6 +72,7 @@ done
 if [ -z "$task_json" ]; then
     echo "mtt - Error: --task parameter is required"
     show_help
+    exit $EXIT_MISSING_ARGS
 fi
 
 echo "mtt - task to be imported is : $task_json"
@@ -77,7 +84,7 @@ annotations_exist=$(echo "$task_json" | jq 'has("annotations")')
 if [ "$annotations_exist" != "true" ]; then
     echo "mtt - 🤷 Ignoring this task : Task JSON has no annotations field"
     echo "mtt - ----------------------------------------------------------"
-    exit 0
+    exit $EXIT_IGNORED_NO_ANNOTATIONS
 fi
 
 source_file=$(echo "$task_json" | jq -r 'if .annotations then (.annotations[] | select(.description | startswith("Source:")) | .description) else empty end' | sed 's/^Source: //')
@@ -85,13 +92,13 @@ source_file=$(echo "$task_json" | jq -r 'if .annotations then (.annotations[] | 
 if [ -z "$source_file" ]; then
     echo "mtt - 🤷 Ignoring this task : No Source annotation found in task"
     echo "mtt - ----------------------------------------------------------"
-    exit 0
+    exit $EXIT_IGNORED_NO_SOURCE
 fi
 
 if [ ! -f "$source_file" ]; then
     echo "mtt - 🤷 Error: Source file not found: $source_file"
     echo "mtt - ----------------------------------------------------------"
-    exit 1
+    exit $EXIT_SOURCE_FILE_NOT_FOUND
 fi
 
 echo "mtt - Processing task for file: $source_file"
