@@ -5,7 +5,7 @@ modified_markdown_file.md: existing_markdown_file.md \
 	../../mtt_md_import.sh --task '$(shell cat task_to_be_imported.json)'
 
 clean:
-	rm modified_markdown_file.md
+	rm -f modified_markdown_file.md
 
 test: modified_markdown_file.md
 	$(call .cecho,"Comparing files with cmp and diff")
