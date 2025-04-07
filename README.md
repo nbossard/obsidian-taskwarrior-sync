@@ -66,7 +66,9 @@ Create a file named "on-modify.obsidian-sync" in folder "~/.task/hooks" with con
 #!/bin/bash
 read -r OLD
 read -r NEW
-~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_taskwarrior_to_md.sh --task "$NEW"
+# escape double quotes
+NEW_ESCAPED=$(echo "$NEW" | sed 's/"/\\"/g')
+~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_import.sh --task $NEW_ESCAPED
 echo "$NEW"
 ```
 
