@@ -80,13 +80,21 @@ echo "$NEW"
 
 ## usage
 
-### import obsidian tasks into taskwarrior
-
-typical usage steps:
+under the hood way of working:
 
 - adding uuids to obsidian tasks
 - generating import file
 - import file into taskwarrior
+
+### import obsidian tasks into taskwarrior
+
+#### All-in-one script
+
+```bash
+mtt_sync
+```
+
+#### more low level
 
 ```bash
 ## Add uuids to all tasks
