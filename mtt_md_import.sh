@@ -26,6 +26,7 @@ show_help() {
     echo "Options:"
     echo "  --help       Show this help message"
     echo "  --task JSON  The task in JSON format (required)"
+    echo "  --debug      Display debug information including sed commands"
     echo
     echo "Sample call:"
     echo "mtt_md_import --task '{\"id\":0,\"description\":\"feed the cat\",\"end\":\"20250328T213759Z\",\"entry\"::\"20250328T102249Z\",\"modified\":\"20250328T213759Z\",\"project\":\"paymetrics\",\"status\":\"completed\",\"uuid\":\"eb48e204-e8be-416b-857d-8154edbbd7ad\",\"annotations\":[{\"entry\":\"20250328T213742Z\",\"description\":\"Source: \/Users\/nbossard\/PilotageDistri\/business-server\/documentation\/Agenda\/2025-03-28.md\"}],\"tags\":[\"Nicolas\"],\"urgency\":4.4}'"
@@ -41,12 +42,13 @@ format_date() {
         echo "${date_str:0:4}-${date_str:4:2}-${date_str:6:2}"
     fi
 }
-
 # Parse command line arguments
 task_json=""
+debug=false
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --help) show_help ;;
+        --debug) debug=true; shift; continue ;;
         --task)
             shift
             if [[ -n "$1" ]]; then
@@ -127,8 +129,17 @@ updated_task_line+="$formatted_tags"
 [ -n "$uuid" ] && updated_task_line+=" [id:: $uuid]"
 [ -n "$depends" ] && updated_task_line+=" [dependsOn:: $depends]"
 
-# Find and replace the task in the file
-sed -i.bak -E "s/^- \[ \].*\[id:: $uuid\].*$/$updated_task_line/" "$source_file"
+# Escape special characters in the updated task line for sed
+# We only need to escape the sed delimiter (|) and & for the replacement
+escaped_task_line=$(printf '%s\n' "$updated_task_line" | sed 's/[|&]/\\&/g')
+
+# Use a different delimiter for sed (| instead of /) to avoid issues with slashes
+sed_command="sed -i.bak -E 's|^- \[ \].*\[id:: $uuid\].*$|${escaped_task_line}|' \"$source_file\""
+if [ "$debug" = true ]; then
+    echo "mtt - Debug: Executing sed command:"
+    echo "mtt - $sed_command"
+fi
+eval "$sed_command"
 
 # Remove backup file
 rm "${source_file}.bak"
