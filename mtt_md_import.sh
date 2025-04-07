@@ -125,6 +125,8 @@ fi
 # Build the updated task line
 if [ "$status" = "completed" ]; then
     updated_task_line="- [x] $description"
+elif [ "$status" = "deleted" ]; then
+    updated_task_line="- [-] $description"
 else
     updated_task_line="- [ ] $description"
 fi

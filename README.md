@@ -121,6 +121,8 @@ Using obsidian hooks, script mtt_md_import.sh is called automatically.
 | dependsOn     | depends     |
 | #toto         | tag "toto"  |
 
+Please also note that status deleted in taskwarrior is marked as canceled [-] in markdown.
+
 ## reference documentations
 
 taskwarrior import format : <https://github.com/GothenburgBitFactory/taskwarrior/blob/develop/doc/devel/rfcs/task.md>
