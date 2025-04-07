@@ -103,6 +103,7 @@ end_date=$(echo "$task_json" | jq -r '.end // empty')
 due_date=$(echo "$task_json" | jq -r '.due // empty')
 tags=$(echo "$task_json" | jq -r '.tags // empty | join(",")')
 uuid=$(echo "$task_json" | jq -r '.uuid // empty')
+depends=$(echo "$task_json" | jq -r '.depends // empty')
 
 # Convert tags to Obsidian format (@tag or #tag)
 formatted_tags=""
@@ -124,6 +125,7 @@ updated_task_line+="$formatted_tags"
 [ -n "$due_date" ] && updated_task_line+=" [due:: $(format_date "$due_date")]"
 # uuid should be last for readability
 [ -n "$uuid" ] && updated_task_line+=" [id:: $uuid]"
+[ -n "$depends" ] && updated_task_line+=" [dependsOn:: $depends]"
 
 # Find and replace the task in the file
 sed -i.bak -E "s/^- \[ \].*\[id:: $uuid\].*$/$updated_task_line/" "$source_file"

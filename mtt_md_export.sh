@@ -103,6 +103,9 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
     # Remove [id:: ...] from the description
     description=$(echo "$description" | sed -E 's/\[id:: [^]]+\]//')
 
+    # Remove [dependsOn:: ...] from the description
+    description=$(echo "$description" | sed -E 's/\[dependsOn:: [^]]+\]//')
+
     # Remove tags #toto from the description
     description=$(echo "$description" | sed -E 's/#[^ ]+//')
 
@@ -139,6 +142,12 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
     id=$(echo "$line" | rg -o "\[id:: [^]]+\]" | sed -E 's/\[id:: (.+)\]/\1/')
     if [ -n "$id" ]; then
         echo "found id : $id"
+    fi
+
+    # Extract the id if present
+    dependsOn=$(echo "$line" | rg -o "\[dependsOn:: [^]]+\]" | sed -E 's/\[dependsOn:: (.+)\]/\1/')
+    if [ -n "$dependsOn" ]; then
+        echo "found dependsOn : $dependsOn"
     fi
 
     # Extract all @ tags
@@ -179,6 +188,7 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
     [ -n "$end" ] && json+=",\"end\":\"$end\""
     [ -n "$due" ] && json+=",\"due\":\"$due\""
     [ -n "$id" ] && json+=",\"uuid\":\"$id\""
+    [ -n "$dependsOn" ] && json+=",\"depends\":\"$dependsOn\""
     [ -n "$project_name" ] && json+=",\"project\":\"$project_name\""
     [ -n "$all_tags" ] && json+=",\"tags\":[\"$(echo "$all_tags" | sed 's/,/\",\"/g')\"]"
     json+=",\"annotations\":[{\"description\":\"Source: $abs_file_path\"}]"

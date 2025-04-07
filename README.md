@@ -106,6 +106,7 @@ Using obsidian hooks, script mtt_md_import.sh is called automatically.
 | markdown task | taskwarrior |
 | ------------- | ----------- |
 | start         | wait        |
+| dependsOn     | depends     |
 | #toto         | tag "toto"  |
 
 ## reference documentations
