@@ -6,6 +6,7 @@ readonly EXIT_MISSING_ARGS=1
 readonly EXIT_SOURCE_FILE_NOT_FOUND=2
 readonly EXIT_IGNORED_NO_ANNOTATIONS=0  # Not an error, just skipping
 readonly EXIT_IGNORED_NO_SOURCE=0       # Not an error, just skipping
+readonly EXIT_SED_COMMAND_FAILED=3
 
 echo
 echo "mtt - ------------ starting import to markdown -----------------"
@@ -149,7 +150,11 @@ if [ "$debug" = true ]; then
     echo "mtt - Debug: Executing sed command:"
     echo "mtt - $sed_command"
 fi
-eval "$sed_command"
+if ! eval "$sed_command"; then
+    echo "mtt - ❌ Error: Failed to update task in file $source_file"
+    echo "mtt - ----------------------------------------------------------"
+    exit $EXIT_SED_COMMAND_FAILED
+fi
 
 # Remove backup file
 rm "${source_file}.bak"
