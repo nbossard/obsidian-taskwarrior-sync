@@ -112,7 +112,8 @@ end_date=$(echo "$task_json" | jq -r '.end // empty')
 due_date=$(echo "$task_json" | jq -r '.due // empty')
 tags=$(echo "$task_json" | jq -r '.tags // empty | join(",")')
 uuid=$(echo "$task_json" | jq -r '.uuid // empty')
-depends=$(echo "$task_json" | jq -r '.depends // empty')
+# Convert the depends array to a comma-separated list (no spaces)
+depends_commalist=$(echo "$task_json" | jq -r '.depends // empty | if type == "array" then join(",") else . end')
 
 # Convert tags to Obsidian format (@tag or #tag)
 formatted_tags=""
@@ -134,7 +135,7 @@ updated_task_line+="$formatted_tags"
 [ -n "$due_date" ] && updated_task_line+=" [due:: $(format_date "$due_date")]"
 # uuid should be last for readability
 [ -n "$uuid" ] && updated_task_line+=" [id:: $uuid]"
-[ -n "$depends" ] && updated_task_line+=" [dependsOn:: $depends]"
+[ -n "$depends_commalist" ] && updated_task_line+=" [dependsOn:: $depends_commalist]"
 
 # Escape special characters in the updated task line for sed
 # We only need to escape the sed delimiter (|) and & for the replacement
