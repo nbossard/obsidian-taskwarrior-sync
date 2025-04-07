@@ -66,7 +66,8 @@ alias mtt_sync="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_sync.sh"
 ### hooks
 
 Hooks are used when tasks are modified in taskwarrior to modify original markdown files they were extracted from.
-Create a file named "on-modify.obsidian-sync" in folder "~/.task/hooks"
+
+Create a file named "on-modify.obsidian-sync" in folder "~/.task/hooks" with content like :
 ```
 #!/bin/bash
 read -r OLD
@@ -74,6 +75,8 @@ read -r NEW
 ~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_import.sh --task "$NEW"
 echo "$NEW"
 ```
+
+...and make it executable with `chmod u+x ~/.task/hooks/on-modify.obsidian-sync`
 
 ## usage
 
