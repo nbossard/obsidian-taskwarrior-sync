@@ -90,9 +90,13 @@ under the hood way of working:
 
 #### All-in-one script
 
+Just call mtt_sync script that will do it all for you.
+
 ```bash
 mtt_sync
 ```
+
+Sample real-life call : ` mtt_sync --mask "documentation/Agenda/*.md" --project paymetrics`
 
 #### more low level
 
