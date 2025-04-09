@@ -131,6 +131,11 @@ obsidianpro.command="open \"obsidian://open?vault=perso&file=$LAST_MATCH\""
 obsidianpro.modes="batch,any,normal"
 ```
 
+## tests
+
+If this readme is not clear enough, tests can help you understand expected program behaviour, they are written to be very easy to read for non technical persons.
+Please refer to [tests](./tests/README.md) folder
+
 ## reference documentations
 
 taskwarrior import format : <https://github.com/GothenburgBitFactory/taskwarrior/blob/develop/doc/devel/rfcs/task.md>
