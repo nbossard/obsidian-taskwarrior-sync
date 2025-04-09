@@ -88,8 +88,8 @@ done
 # First pass: build mapping of short IDs to UUIDs
 echo "First pass: Building mapping of short IDs to UUIDs..."
 echo "Searching for short IDs with pattern: \\[id:: [a-z0-9]{6}\\]"
-debug_echo "Running: rg --no-heading --line-number --with-filename \"\\[id:: [a-z0-9]{6}\\]\" $file_pattern"
-rg --no-heading --line-number --with-filename "\\[id:: [a-z0-9]{6}\\]" $file_pattern | while IFS=: read -r file line_number line; do
+debug_echo "Running: rg --no-heading --line-number --with-filename \"\\[id:: [a-z0-9]{6}\\]\" --glob $file_pattern"
+rg --no-heading --line-number --with-filename "\\[id:: [a-z0-9]{6}\\]" --glob $file_pattern | while IFS=: read -r file line_number line; do
     echo "Found line with short ID: $line"
     # Extract the short ID using regex
     if [[ $line =~ \[id::\ ([a-z0-9]{6})\] ]]; then
@@ -105,7 +105,7 @@ if [[ -f /tmp/id_mappings.tmp ]]; then
     echo "Updating references..."
     while IFS=: read -r short_id uuid; do
         echo "Updating references: $short_id -> $uuid"
-        rg --files-with-matches "\[dependsOn:: $short_id\]" $file_pattern | while read -r file; do
+        rg --files-with-matches "\[dependsOn:: $short_id\]" --glob $file_pattern | while read -r file; do
             echo "Updating references in $file"
             sed -i.bak "s/\[dependsOn:: $short_id\]/[dependsOn:: $uuid]/g" "$file"
             rm -f "${file}.bak"
@@ -116,7 +116,7 @@ if [[ -f /tmp/id_mappings.tmp ]]; then
     echo "Updating task IDs..."
     while IFS=: read -r short_id uuid; do
         echo "Updating ID: $short_id -> $uuid"
-        rg --files-with-matches "\[id:: $short_id\]" $file_pattern | while read -r file; do
+        rg --files-with-matches "\[id:: $short_id\]" --glob $file_pattern | while read -r file; do
             echo "Updating ID in $file"
             sed -i.bak "s/\[id:: $short_id\]/[id:: $uuid]/g" "$file"
             rm -f "${file}.bak"
@@ -128,7 +128,7 @@ fi
 rm -f /tmp/id_mappings.tmp
 
 # Fourth pass: Add UUIDs to tasks without any ID
-rg --no-heading --line-number --with-filename "^- \\[ \\] " $file_pattern | while IFS=: read -r file line_number line; do
+rg --no-heading --line-number --with-filename "^- \\[ \\] " --glob $file_pattern | while IFS=: read -r file line_number line; do
     echo "......................................"
     echo "scanning file $file"
     echo "scanning line $line"
