@@ -26,6 +26,13 @@ has_mapping() {
     return 1
 }
 
+# Function to print debug messages
+debug_echo() {
+    if [[ "$debug_mode" = true ]]; then
+        echo "DEBUG: $1"
+    fi
+}
+
 echo
 echo "mtt - ------------ starting add UUIDs in markdown -----------------"
 echo
@@ -44,6 +51,7 @@ show_help() {
     echo "Options:"
     echo "  --help              Show this help message and exit"
     echo "  --mask PATTERN      File pattern to search (default: '*.md')"
+    echo "  --debug            Enable debug mode to show detailed commands"
     echo
     echo "Example:"
     echo "  ./add_uuids.sh"
@@ -69,6 +77,9 @@ while [[ "$#" -gt 0 ]]; do
                 exit 1
             fi
             ;;
+        --debug)
+            debug_mode=true
+            ;;
         *) echo "Unknown parameter: $1"; show_help; exit 1 ;;
     esac
     shift
@@ -77,6 +88,7 @@ done
 # First pass: build mapping of short IDs to UUIDs
 echo "First pass: Building mapping of short IDs to UUIDs..."
 echo "Searching for short IDs with pattern: \\[id:: [a-z0-9]{6}\\]"
+debug_echo "Running: rg --no-heading --line-number --with-filename \"\\[id:: [a-z0-9]{6}\\]\" $file_pattern"
 rg --no-heading --line-number --with-filename "\\[id:: [a-z0-9]{6}\\]" $file_pattern | while IFS=: read -r file line_number line; do
     echo "Found line with short ID: $line"
     # Extract the short ID using regex
