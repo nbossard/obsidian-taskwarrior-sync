@@ -14,6 +14,7 @@ on add uuid :
 - [test_add_uuids_2_multiple_tasks](./test_add_uuids_2_multiple_tasks/README.md) adding uuid on multiple existing task in one markdown file
 - [test_add_uuids_3_multiple_files](./test_add_uuids_3_multiple_files/README.md) adding uuid on multiple existing task in multiple files
 - [test_add_uuids_4_dependencies_single_file](./test_add_uuids_4_dependencies_single_file/README.md) replace dependency by UUIDs
+- [test_add_uuids_5_dependencies_multiple_files](./test_add_uuids_5_dependencies_multiple_files/README.md) replace dependency by UUIDs across multiple files
 
 ## To launch tests
 
