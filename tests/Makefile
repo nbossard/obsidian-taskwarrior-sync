@@ -5,6 +5,7 @@ test:
 	$(MAKE) -C test4_import_deleted $@
 	$(MAKE) -C test_add_uuids_1 $@
 	$(MAKE) -C test_add_uuids_2_multiple_tasks $@
+	$(MAKE) -C test_add_uuids_3_multiple_files $@
 
 clean:
 	$(MAKE) -C test1_import $@
@@ -13,3 +14,4 @@ clean:
 	$(MAKE) -C test4_import_deleted $@
 	$(MAKE) -C test_add_uuids_1 $@
 	$(MAKE) -C test_add_uuids_2_multiple_tasks $@
+	$(MAKE) -C test_add_uuids_3_multiple_files $@
