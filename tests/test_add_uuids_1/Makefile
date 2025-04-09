@@ -1,7 +1,8 @@
+.PRECIOUS: tmp/modified_markdown_file.md
 tmp/modified_markdown_file.md: existing_markdown_file.md \
 	Makefile
 	cp $< $@
-	../../mtt_md_add_uuids.sh --mask "$<"
+	../../mtt_md_add_uuids.sh --mask "$@"
 
 tmp/modified_markdown_file_uuid_changed.md: tmp/modified_markdown_file.md
 	sed 's/[a-f0-9]\{8\}-[a-f0-9]\{4\}-[a-f0-9]\{4\}-[a-f0-9]\{4\}-[a-f0-9]\{12\}/11111111-1111-1111-1111-111111111111/g' $< > $@
