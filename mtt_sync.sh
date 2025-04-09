@@ -67,7 +67,7 @@ fi
 
 # Build command arguments for mtt_md_add_uuids.sh (only needs mask)
 uuid_args=()
-[ -n "$file_pattern" ] && uuid_args+=(--mask "$file_pattern")
+[ -n "$file_pattern" ] && uuid_args+=(--mask "\"$file_pattern\"")
 
 # Build command arguments for mtt_md_to_taskwarrior.sh (needs both mask and project)
 export_args=()
