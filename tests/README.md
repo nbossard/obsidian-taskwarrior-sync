@@ -10,7 +10,8 @@ List of tests written, on import :
 - [test4_import_deleted](./test4_import_deleted/) modification of a task to deleted in TW synced back to original file.
 
 on add uuid :
-- [test_add_uuids_1](./test_add_uuids_1/) adding uuid on an existing task in a markdown file
+- [test_add_uuids_1](./test_add_uuids_1/) adding uuid on one existing task in one markdown file
+- [test_add_uuids_2_multiple_tasks](./test_add_uuids_2_multiple_tasks/) adding uuid on multiple existing task in one markdown file
 
 ## To launch tests
 

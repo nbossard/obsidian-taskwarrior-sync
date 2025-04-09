@@ -4,6 +4,7 @@ test:
 	$(MAKE) -C test3_import_with_dependency $@
 	$(MAKE) -C test4_import_deleted $@
 	$(MAKE) -C test_add_uuids_1 $@
+	$(MAKE) -C test_add_uuids_2_multiple_tasks $@
 
 clean:
 	$(MAKE) -C test1_import $@
@@ -11,3 +12,4 @@ clean:
 	$(MAKE) -C test3_import_with_dependency $@
 	$(MAKE) -C test4_import_deleted $@
 	$(MAKE) -C test_add_uuids_1 $@
+	$(MAKE) -C test_add_uuids_2_multiple_tasks $@
