@@ -31,17 +31,7 @@ ID Age   Project    Description                                                 
                       2025-03-31 Source: /Users/nbossard/Agenda/2025-03-28.md
 ```
 
-Note that the annotation can be opened easily using [taskopen](https://github.com/jschlatow/taskopen)
-
-Extract of config for a repo named business-server
-```rc
-[Actions]
-obsidianpro.target=annotations
-obsidianpro.labelregex=".*"
-obsidianpro.regex="^.*business-server(.*\\.md)"
-obsidianpro.command="open \"obsidian://open?vault=business-server&file=$LAST_MATCH\""
-obsidianpro.modes="batch,any,normal"
-```
+Note that the original file is in annotation and can be opened easily using taskopen. See [taskopen configuration below](#taskopen-configuration)
 
 ## External dependencies :
 
@@ -124,6 +114,22 @@ Using obsidian hooks, script mtt_md_import.sh is called automatically.
 | #toto         | tag "toto"  |
 
 Please also note that status deleted in taskwarrior is marked as canceled [-] in markdown.
+
+## Taskopen configuration
+
+[taskopen](https://github.com/jschlatow/taskopen) is a taskwarrior to interact easily with tasks annotations.
+We can use it to easily open task original source file.
+
+Sample of additional config for taskopen for defining an action to open original source file in obsidian repo named "perso":
+
+```rc
+[Actions]
+obsidianpro.target=annotations
+obsidianpro.labelregex=".*"
+obsidianpro.regex="^.*perso(.*\\.md)"
+obsidianpro.command="open \"obsidian://open?vault=perso&file=$LAST_MATCH\""
+obsidianpro.modes="batch,any,normal"
+```
 
 ## reference documentations
 
