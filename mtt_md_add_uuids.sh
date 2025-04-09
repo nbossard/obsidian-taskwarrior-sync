@@ -104,9 +104,9 @@ done
 if [[ -f /tmp/id_mappings.tmp ]]; then
     echo "Updating references..."
     while IFS=: read -r short_id uuid; do
-        echo "Updating references: $short_id -> $uuid"
+        echo "Updating dependsOn: $short_id -> $uuid in all files"
         rg --files-with-matches "\[dependsOn:: $short_id\]" $file_pattern | while read -r file; do
-            echo "Updating references in $file"
+            echo "Updating dependsOn in $file"
             sed -i.bak "s/\[dependsOn:: $short_id\]/[dependsOn:: $uuid]/g" "$file"
             rm -f "${file}.bak"
         done
@@ -115,7 +115,7 @@ if [[ -f /tmp/id_mappings.tmp ]]; then
     # Third pass: Update the actual IDs
     echo "Updating task IDs..."
     while IFS=: read -r short_id uuid; do
-        echo "Updating ID: $short_id -> $uuid"
+        echo "Updating ID: $short_id -> $uuid in all files"
         rg --files-with-matches "\[id:: $short_id\]" $file_pattern | while read -r file; do
             echo "Updating ID in $file"
             sed -i.bak "s/\[id:: $short_id\]/[id:: $uuid]/g" "$file"
