@@ -117,7 +117,7 @@ Using obsidian hooks, script mtt_md_import.sh is called automatically.
 
 ## conversion choices
 
-| markdown task | taskwarrior |
+| markdown (obsidian-tasks)| taskwarrior |
 | ------------- | ----------- |
 | start         | wait        |
 | dependsOn     | depends     |
@@ -129,5 +129,6 @@ Please also note that status deleted in taskwarrior is marked as canceled [-] in
 
 taskwarrior import format : <https://github.com/GothenburgBitFactory/taskwarrior/blob/develop/doc/devel/rfcs/task.md>
 
-taskwarrior hooks: <https://taskwarrior.org/docs/hooks/>s
+taskwarrior hooks: <https://taskwarrior.org/docs/hooks/>
 
+Obsidian-tasks plugin : <https://github.com/obsidian-tasks-group/obsidian-tasks>
