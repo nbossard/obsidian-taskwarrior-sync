@@ -4,6 +4,6 @@ This is test of a task deletion in taskwarrior being synced back to original fil
 
 It is marked in original file as canceled.
 
-[existing_markdown_file](tests/test4_import_deleted/existing_markdown_file.md)
+[existing_markdown_file](existing_markdown_file.md)
 
-[expected_markdown_file](tests/test4_import_deleted/expected_markdown_file.md)
+[expected_markdown_file](expected_markdown_file.md)
