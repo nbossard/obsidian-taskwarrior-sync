@@ -109,6 +109,8 @@ Using obsidian hooks, script mtt_md_import.sh is called automatically.
 
 ## conversion choices
 
+Only active tasks are synchronised.
+
 | markdown (obsidian-tasks)| taskwarrior |
 | ------------- | ----------- |
 | start         | wait        |
