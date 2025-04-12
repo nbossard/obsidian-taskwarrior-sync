@@ -126,13 +126,17 @@ We can use it to easily open task original source file.
 
 Sample of additional config for taskopen for defining an action to open original source file in obsidian repo named "perso":
 
-```rc
+```ini
 [Actions]
-obsidianpro.target=annotations
-obsidianpro.labelregex=".*"
-obsidianpro.regex="^.*perso(.*\\.md)"
-obsidianpro.command="open \"obsidian://open?vault=perso&file=$LAST_MATCH\""
-obsidianpro.modes="batch,any,normal"
+# new additional action, tested on macos, please adapt command to other OS
+obsidianopenperso.target=annotations
+obsidianopenperso.labelregex="^Source.*"
+obsidianopenperso.regex="^.*perso(.*\\.md)"
+obsidianopenperso.command="open \"obsidian://open?vault=perso&file=$LAST_MATCH\""
+obsidianopenperso.modes="batch,any,normal"
+
+# you may also need to change "file action" following line
+files.labelregex="(?!.*Source).*"
 ```
 
 ## tests
