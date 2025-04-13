@@ -9,7 +9,7 @@ readonly EXIT_IGNORED_NO_SOURCE=0       # Not an error, just skipping
 readonly EXIT_SED_COMMAND_FAILED=3
 
 echo
-echo "mtt - ------------ starting import to markdown -----------------"
+echo "mtt - ------------ Copying changes to original markdown -----------------"
 echo
 
 # Load environment variables from .env file if it exists
