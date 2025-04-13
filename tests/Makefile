@@ -1,4 +1,5 @@
 test:
+	$(MAKE) -C test_md_to_taskwarrior_1 $@
 	$(MAKE) -C test_taskwarrior_to_md_1 $@
 	$(MAKE) -C test_taskwarrior_to_md_2_non_existing_source_file $@
 	$(MAKE) -C test_taskwarrior_to_md_3_with_dependency $@
@@ -10,6 +11,7 @@ test:
 	$(MAKE) -C test_add_uuids_5_dependencies_multiple_files $@
 
 clean:
+	$(MAKE) -C test_md_to_taskwarrior_1 $@
 	$(MAKE) -C test_taskwarrior_to_md_1 $@
 	$(MAKE) -C test_taskwarrior_to_md_2_non_existing_source_file $@
 	$(MAKE) -C test_taskwarrior_to_md_3_with_dependency $@
