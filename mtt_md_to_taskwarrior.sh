@@ -15,7 +15,7 @@ fi
 
 # Show help message
 show_help() {
-    echo "Usage: mtt_md_export.sh [--help] [--mask PATTERN] [--project NAME]"
+    echo "Usage: mtt_md_to_taskwarrior.sh [--help] [--mask PATTERN] [--project NAME]"
     echo
     echo "Export markdown tasks to TaskWarrior compatible NDJSON format."
     echo

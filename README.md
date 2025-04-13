@@ -51,8 +51,8 @@ To work correctly it requires following external program to be available on your
 Git clone this repo and add aliases to bash scripts like following:
 
 ```bash
-alias mtt_md_import="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_import.sh"
-alias mtt_md_export="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_export.sh"
+alias mtt_taskwarrior_to_md="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_taskwarrior_to_md.sh"
+alias mtt_md_to_taskwarrior="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_to_taskwarrior.sh"
 alias mtt_md_add_uuids="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_add_uuids.sh"
 alias mtt_sync="~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_sync.sh"
 ```
@@ -66,7 +66,7 @@ Create a file named "on-modify.obsidian-sync" in folder "~/.task/hooks" with con
 #!/bin/bash
 read -r OLD
 read -r NEW
-~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_md_import.sh --task "$NEW"
+~/folder-you-cloned/obsidian-taskwarrior-sync/mtt_taskwarrior_to_md.sh --task "$NEW"
 echo "$NEW"
 ```
 
@@ -97,15 +97,15 @@ Sample real-life call : ` mtt_sync --mask "documentation/Agenda/*.md" --project 
 ```bash
 ## Add uuids to all tasks
 ## This will modify your markdown files.
-mtt_md_uuids
+mtt_add_uuids
 # generate a file tasks.ndjson
-mtt_md_export
+mtt_md_to_taskwarrior
 task import tasks.ndjson
 ```
 
 ### automatically update obsidian when taskwarrior tasks are updated
 
-Using obsidian hooks, script mtt_md_import.sh is called automatically.
+Using obsidian hooks, script mtt_taskwarrior_to_md.sh is called automatically.
 
 ## conversion choices
 

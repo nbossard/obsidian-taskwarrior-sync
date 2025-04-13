@@ -1,10 +1,10 @@
-# generated the markdown file modified by mtt_md_import
+# generate the markdown file modified by mtt_taskwarrior_to_md
 tmp/modified_markdown_file.md: existing_markdown_file.md \
 	Makefile \
 	task_to_be_imported.json \
-	../../mtt_md_import.sh
+	../../mtt_taskwarrior_to_md.sh
 	cp ./existing_markdown_file.md tmp/modified_markdown_file.md
-	../../mtt_md_import.sh --task '$(shell cat task_to_be_imported.json)'
+	../../mtt_taskwarrior_to_md.sh --task '$(shell cat task_to_be_imported.json)'
 
 clean:
 	rm -f tmp/*

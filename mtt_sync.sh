@@ -59,14 +59,14 @@ done
 uuid_args=()
 [ -n "$file_pattern" ] && uuid_args+=(--mask "$file_pattern")
 
-# Build command arguments for mtt_md_export.sh (needs both mask and project)
+# Build command arguments for mtt_md_to_taskwarrior.sh (needs both mask and project)
 export_args=()
 [ -n "$file_pattern" ] && export_args+=(--mask "$file_pattern")
 [ -n "$project_name" ] && export_args+=(--project "$project_name")
 
 # Execute scripts with their respective arguments
 ~/perso/obsidian-taskwarrior-sync/mtt_md_add_uuids.sh "${uuid_args[@]:-}"
-~/perso/obsidian-taskwarrior-sync/mtt_md_export.sh "${export_args[@]:-}"
+~/perso/obsidian-taskwarrior-sync/mtt_md_to_taskwarrior.sh "${export_args[@]:-}"
 
 echo
 task import tasks.ndjson
