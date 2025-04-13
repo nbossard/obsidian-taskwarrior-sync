@@ -2,7 +2,7 @@
 clean:
 	@echo "Nothing to be cleaned"
 
-test:
+test: ../../mtt_md_import.sh
 	@echo "Testing import with non-existing markdown file..."
 	@if ../../mtt_md_import.sh --task '$(shell cat task_to_be_imported.json)' 2>/dev/null; then \
 		echo "❌ TEST FAILED: Command succeeded but should have failed"; \

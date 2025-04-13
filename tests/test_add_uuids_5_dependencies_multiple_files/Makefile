@@ -1,6 +1,7 @@
 .PRECIOUS: tmp/modified_markdown_file%.md
 tmp/modified_markdown_file1.md: existing_markdown_file1.md \
-	Makefile
+	Makefile \
+	../../mtt_md_add_uuids.sh
 	cp existing_markdown_file1.md tmp/modified_markdown_file1.md
 	cp existing_markdown_file2.md tmp/modified_markdown_file2.md
 	../../mtt_md_add_uuids.sh --mask "tmp/*.md"

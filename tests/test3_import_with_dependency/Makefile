@@ -1,6 +1,7 @@
 tmp/modified_markdown_file.md: existing_markdown_file.md \
 	Makefile \
-	task_to_be_imported.json
+	task_to_be_imported.json \
+	../../mtt_md_import.sh
 	cp ./existing_markdown_file.md tmp/modified_markdown_file.md
 	../../mtt_md_import.sh --task '$(shell cat task_to_be_imported.json)'
 
