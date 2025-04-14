@@ -1,5 +1,6 @@
 # generate the markdown file modified by mtt_taskwarrior_to_md
 tmp/tasks.ndjson: existing_markdown_file.md \
+	../../mtt_md_to_taskwarrior.sh \
 	Makefile
 	../../mtt_md_to_taskwarrior.sh
 	mv tasks.ndjson tmp/tasks.ndjson
@@ -18,7 +19,7 @@ test: tmp/tasks_removed_path.ndjson
 		echo "✅ TEST PASSED : Files are identical"; \
 	else \
 		echo "❌ Files are different:"; \
-		DIFF_OUTPUT=$$(diff -u expected_markdown_file.md tmp/modified_markdown_file.md); \
+		DIFF_OUTPUT=$$(diff -u expected_tasks.ndjson $<); \
 		echo "$$DIFF_OUTPUT"; \
 		exit 1; \
 	fi
