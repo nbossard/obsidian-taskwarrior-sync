@@ -64,9 +64,12 @@ export_args=()
 [ -n "$file_pattern" ] && export_args+=(--mask "$file_pattern")
 [ -n "$project_name" ] && export_args+=(--project "$project_name")
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 # Execute scripts with their respective arguments
-~/perso/obsidian-taskwarrior-sync/mtt_md_add_uuids.sh "${uuid_args[@]:-}"
-~/perso/obsidian-taskwarrior-sync/mtt_md_to_taskwarrior.sh "${export_args[@]:-}"
+"$SCRIPT_DIR/mtt_md_add_uuids.sh" "${uuid_args[@]:-}"
+"$SCRIPT_DIR/mtt_md_to_taskwarrior.sh" "${export_args[@]:-}"
 
 echo
 task import tasks.ndjson
