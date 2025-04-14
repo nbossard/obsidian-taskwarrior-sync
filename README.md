@@ -116,6 +116,10 @@ Only active tasks are synchronised.
 | start         | wait        |
 | dependsOn     | depends     |
 | #toto         | tag "toto"  |
+| priority:highest | uda.priority=H |
+| priority:high | uda.priority=H |
+| priority:low | uda.priority=L |
+| priority:lowest | uda.priority=L |
 
 Please also note that status deleted in taskwarrior is marked as canceled [-] in markdown.
 

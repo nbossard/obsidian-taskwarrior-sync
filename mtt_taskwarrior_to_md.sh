@@ -49,6 +49,22 @@ format_date() {
         echo "${date_str:0:4}-${date_str:4:2}-${date_str:6:2}"
     fi
 }
+
+# Function to convert TaskWarrior priority to markdown
+# suitable for obsidian "tasks" plugin
+convert_priority() {
+    local priority="$1"
+    if [ -n "$priority" ]; then
+        case "$priority" in  # Convert to lowercase for comparison
+            "H") priority="high" ;;
+            "M") priority="medium" ;;
+            "L") priority="low" ;;
+        esac
+    fi
+    echo "$priority"
+}
+
+
 # Parse command line arguments
 task_json=""
 debug=false
@@ -116,6 +132,7 @@ end_date=$(echo "$task_json" | jq -r '.end // empty')
 due_date=$(echo "$task_json" | jq -r '.due // empty')
 tags=$(echo "$task_json" | jq -r '.tags // empty | join(",")')
 uuid=$(echo "$task_json" | jq -r '.uuid // empty')
+priority=$(echo "$task_json" | jq -r '.priority // empty')
 # Convert the depends array to a comma-separated list (no spaces)
 depends_commalist=$(echo "$task_json" | jq -r '.depends // empty | if type == "array" then join(",") else . end')
 
@@ -139,6 +156,7 @@ updated_task_line+="$formatted_tags"
 [ -n "$start_date" ] && updated_task_line+=" [start:: $(format_date "$start_date")]"
 [ -n "$end_date" ] && updated_task_line+=" [completion:: $(format_date "$end_date")]"
 [ -n "$due_date" ] && updated_task_line+=" [due:: $(format_date "$due_date")]"
+[ -n "$priority" ] && updated_task_line+=" [priority:: $(convert_priority "$priority")]"
 # uuid should be last for readability
 [ -n "$uuid" ] && updated_task_line+=" [id:: $uuid]"
 [ -n "$depends_commalist" ] && updated_task_line+=" [dependsOn:: $depends_commalist]"
