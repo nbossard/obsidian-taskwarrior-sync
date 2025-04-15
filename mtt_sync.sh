@@ -55,6 +55,16 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Check required external programs are installed first
+"$SCRIPT_DIR/mtt_check_requirements.sh"
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
 # Build command arguments for mtt_md_add_uuids.sh (only needs mask)
 uuid_args=()
 [ -n "$file_pattern" ] && uuid_args+=(--mask "$file_pattern")
@@ -63,9 +73,6 @@ uuid_args=()
 export_args=()
 [ -n "$file_pattern" ] && export_args+=(--mask "$file_pattern")
 [ -n "$project_name" ] && export_args+=(--project "$project_name")
-
-# Get the directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Execute scripts with their respective arguments
 "$SCRIPT_DIR/mtt_md_add_uuids.sh" "${uuid_args[@]:-}"
