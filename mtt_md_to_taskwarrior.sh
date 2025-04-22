@@ -34,6 +34,20 @@ show_help() {
     exit 0
 }
 
+# Function to convert readable format (2025-03-29) to TaskWarrior date format (20250329T120000Z)
+# to  suitable for obsidian "tasks" plugin
+format_date() {
+    local input_date="$1"
+    # Convert from YYYY-MM-DD to YYYYMMDDThhmmssZ format
+    # Adding default time 12:00:00
+    if [[ $input_date =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+        echo "${input_date//-/}T120000Z"
+    else
+        # If input is not in expected format, return as-is
+        echo "$input_date"
+    fi
+}
+
 # Set defaults from environment variables or fallback values
 file_mask="${OE_MASK:-*.md}"
 project_name="${OE_PROJECT:-}"
@@ -125,18 +139,21 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
 
     # Extract the start date if present
     start=$(echo "$line" | rg -o "\[start:: [^]]+\]" | sed -E 's/\[start:: (.+)\]/\1/')
+    start=$(format_date "$start")
     if [ -n "$start" ]; then
         echo "found start : $start, will be matched to \"wait\""
     fi
 
     # Extract the end date if present
     end=$(echo "$line" | rg -o "\[end:: [^]]+\]" | sed -E 's/\[end:: (.+)\]/\1/')
+    end=$(format_date "$end")
     if [ -n "$end" ]; then
         echo "found end : $end"
     fi
 
     # Extract the due date if present
     due=$(echo "$line" | rg -o "\[due:: [^]]+\]" | sed -E 's/\[due:: (.+)\]/\1/')
+    due=$(format_date "$due")
     if [ -n "$due" ]; then
         echo "found due : $due"
     fi
