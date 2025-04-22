@@ -111,15 +111,15 @@ Using obsidian hooks, script mtt_taskwarrior_to_md.sh is called automatically.
 
 Only active tasks are synchronised.
 
-| markdown (obsidian-tasks)| taskwarrior |
-| ------------- | ----------- |
-| start         | wait        |
-| dependsOn     | depends     |
+| markdown (obsidian-tasks)| taskwarrior | ref docs |
+| ------------- | ----------- | --- |
+| start         | wait        | https://publish.obsidian.md/tasks/Getting+Started/Dates#Start%20date https://taskwarrior.org/docs/task/ |
+| dependsOn     | depends     | |
 | #toto         | tag "toto"  |
-| priority:highest | uda.priority=H |
-| priority:high | uda.priority=H |
-| priority:low | uda.priority=L |
-| priority:lowest | uda.priority=L |
+| priority:highest | uda.priority=H | |
+| priority:high | uda.priority=H | |
+| priority:low | uda.priority=L | |
+| priority:lowest | uda.priority=L | |
 
 Please also note that status deleted in taskwarrior is marked as canceled [-] in markdown.
 
