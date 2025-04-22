@@ -7,6 +7,7 @@ test:
 	$(MAKE) -C test_taskwarrior_to_md_3_with_dependency $@
 	$(MAKE) -C test_taskwarrior_to_md_4_deleted $@
 	$(MAKE) -C test_taskwarrior_to_md_5_with_priority $@
+    $(MAKE) -C test_taskwarrior_to_md_6_desc_with_quote $@
 	$(MAKE) -C test_add_uuids_1 $@
 	$(MAKE) -C test_add_uuids_2_multiple_tasks $@
 	$(MAKE) -C test_add_uuids_3_multiple_files $@
@@ -28,3 +29,5 @@ clean:
 	$(MAKE) -C test_taskwarrior_to_md_3_with_dependency $@
 	$(MAKE) -C test_taskwarrior_to_md_4_deleted $@
 	$(MAKE) -C test_taskwarrior_to_md_5_with_priority $@
+    $(MAKE) -C test_taskwarrior_to_md_6_desc_with_quote $@
+

@@ -36,7 +36,7 @@ show_help() {
     echo "  --debug      Display debug information including sed commands"
     echo
     echo "Sample call:"
-    echo "mtt_taskwarrior_to_md --task \"{\"id\":0,\"description\":\"feed the cat\",\"end\":\"20250328T213759Z\",\"entry\"::\"20250328T102249Z\",\"modified\":\"20250328T213759Z\",\"project\":\"paymetrics\",\"status\":\"completed\",\"uuid\":\"eb48e204-e8be-416b-857d-8154edbbd7ad\",\"annotations\":[{\"entry\":\"20250328T213742Z\",\"description\":\"Source: \/Users\/nbossard\/PilotageDistri\/business-server\/documentation\/Agenda\/2025-03-28.md\"}],\"tags\":[\"Nicolas\"],\"urgency\":4.4}\""
+    echo "mtt_md_import --task \"{\\\"id\":0,\\\"description\\\":\\\"feed the cat\\\",\\\"end\\\":\\\"20250328T213759Z\\\",\\\"entry\\\"::\\\"20250328T102249Z\\\",\\\"modified\\\":\\\"20250328T213759Z\\\",\\\"project\\\":\\\"paymetrics\\\",\\\"status\\\":\\\"completed\\\",\\\"uuid\\\":\\\"eb48e204-e8be-416b-857d-8154edbbd7ad\\\",\\\"annotations\\\":[{\\\"entry\\\":\\\"20250328T213742Z\\\",\\\"description\\\":\\\"Source: \\\/Users\\\/nbossard\\\/PilotageDistri\\\/business-server\\\/documentation\\\/Agenda\\\/2025-03-28.md\\\"}],\\\"tags\\\":[\\\"Nicolas\\\"],\\\"urgency\\\":4.4}\""
     exit 0
 }
 
@@ -66,7 +66,7 @@ convert_priority() {
 
 
 # Parse command line arguments
-task_json=""
+param_task_json=""
 debug=false
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -75,7 +75,7 @@ while [[ "$#" -gt 0 ]]; do
         --task)
             shift
             if [[ -n "$1" ]]; then
-                task_json="$1"
+                param_task_json="$1"
             else
                 echo "mtt - Error: --task requires JSON data"
                 show_help
@@ -86,12 +86,14 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-if [ -z "$task_json" ]; then
+if [ -z "$param_task_json" ]; then
     echo "mtt - Error: --task parameter is required"
     show_help
     exit $EXIT_MISSING_ARGS
 fi
 
+# unescape double quotes
+task_json=$(echo "${param_task_json}" | sed 's/\\"/"/g')
 echo "mtt - task to be imported is : $task_json"
 echo "mtt - removing escaping"
 task_json=$(echo "$task_json" | sed 's/\\"/\"/g')
@@ -166,7 +168,7 @@ updated_task_line+="$formatted_tags"
 escaped_task_line=$(printf '%s\n' "$updated_task_line" | sed 's/[|&]/\\&/g')
 
 # Use a different delimiter for sed (| instead of /) to avoid issues with slashes
-sed_command="sed -i.bak -E 's|^- \[ \].*\[id:: $uuid\].*$|${escaped_task_line}|' \"$source_file\""
+sed_command="sed -i.bak -E \"s|^- \[ \].*\[id:: $uuid\].*$|${escaped_task_line}|\" \"$source_file\""
 if [ "$debug" = true ]; then
     echo "mtt - Debug: Executing sed command:"
     echo "mtt - $sed_command"
