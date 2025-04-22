@@ -2,6 +2,7 @@
   "description": "une tâche dans job queue",
   "status": "pending",
   "wait": "2025-04-22",
+  "due": "2025-04-25",
   "uuid": "16a1d4bb-fec6-416b-be70-6df438a6f44e",
   "annotations": [
     {
