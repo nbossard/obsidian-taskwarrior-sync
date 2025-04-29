@@ -190,6 +190,29 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
         echo "converted priority : $priority"
     fi
 
+    ## extract the merge request number and convert it to annotation
+    ## e.g. : "MR414" in description should be converted to annotation :
+    ## {"entry":"20120110T234559Z","description":"https://gitlab.tech.orange/OrangeMoney/Retailer/pilotagedistri/business-server/-/merge_requests/414"}
+    mr_number=$(echo "$line" | grep -o 'MR[0-9]\+' | head -n 1)
+    mr_annotations=""
+    if [ -n "$mr_number" ]; then
+        echo "found merge request: $mr_number"
+        mr_num=${mr_number#MR}  # Remove 'MR' prefix to get just the number
+        mr_annotations="{\"description\":\"https://gitlab.tech.orange/OrangeMoney/Retailer/pilotagedistri/business-server/-/merge_requests/$mr_num\"}"
+    fi
+
+    # Handle JIRA ticket
+    jira_ticket=$(echo "$line" | grep -o -E '(JIRA:)?OMD-[0-9]+' | head -n 1)
+    if [ -n "$jira_ticket" ]; then
+        echo "found JIRA ticket: $jira_ticket"
+        # Remove JIRA: prefix if present
+        clean_ticket=${jira_ticket#JIRA:}
+        if [ -n "$mr_annotations" ]; then
+            mr_annotations+=","
+        fi
+        mr_annotations+="{\"description\":\"https://jira.tech.orange/browse/$clean_ticket\"}"
+    fi
+
     # Extract all @ tags
     # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
     # at_tags=$(echo "$line" | grep -o '@[[:alnum:]]\+' | sed 's/@//' | tr '\n' ',' | sed 's/,$//')
@@ -232,7 +255,13 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
     [ -n "$project_name" ] && json+=",\"project\":\"$project_name\""
     [ -n "$priority" ] && json+=",\"priority\":\"$priority\""
     [ -n "$all_tags" ] && json+=",\"tags\":[\"$(echo "$all_tags" | sed 's/,/\",\"/g')\"]"
-    json+=",\"annotations\":[{\"description\":\"Source: $abs_file_path\"}]"
+
+    # Add all annotations (source, MR, and JIRA)
+    json+=",\"annotations\":[{\"description\":\"Source: $abs_file_path\"}"
+    if [ -n "$mr_annotations" ]; then
+        json+=",$mr_annotations"
+    fi
+    json+="]"
     json+="}"
 
     echo "$json" >> "$output_file"

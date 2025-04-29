@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added script directory detection to make installation location independent
 - Added check that required programs are well available
 - Added tests on tags good working
+- Begin support of keywords like "MR242" or "JIRA:OMD-3456" to be converted to annotations with URL
 
 ### Changed
 

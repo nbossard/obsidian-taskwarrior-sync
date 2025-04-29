@@ -1,0 +1,16 @@
+{
+  "description": "write feed the cat process MR242 JIRA:OMD-127",
+  "status": "pending",
+  "uuid": "16a1d4bb-fec6-416b-be70-6df438a6f44e",
+  "annotations": [
+    {
+      "description": "Source: existing_markdown_file.md"
+    },
+    {
+      "description": "https://gitlab.tech.orange/OrangeMoney/Retailer/pilotagedistri/business-server/-/merge_requests/242"
+    },
+    {
+      "description": "https://jira.tech.orange/browse/OMD-127"
+    }
+  ]
+}
