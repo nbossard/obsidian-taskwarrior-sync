@@ -130,6 +130,9 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
     # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
     # description=$(echo "$description" | sed -E 's/@[^ ]+//')
 
+    # remove quotes
+    description=$(echo "$description" | sed -E "s/'//g")
+
     # Trim any extra spaces
     description=$(echo "$description" | sed -E 's/^[[:space:]]+|[[:space:]]+$//')
 
