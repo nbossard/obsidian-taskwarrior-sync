@@ -134,7 +134,7 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
     description=$(echo "$description" | sed -E "s/'//g")
 
     # Trim any extra spaces
-    description=$(echo "$description" | sed -E 's/^[[:space:]]+|[[:space:]]+$//')
+    description=$(echo "$description" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')
 
     # escape doubles quotes "
     escaped_description=$(echo "$description" | sed 's/"/\\"/g')
