@@ -5,6 +5,12 @@ echo
 echo "mtt - ------------ starting markdown tasks export -----------------"
 echo
 #
+# Check for required dependencies
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq is required but not installed. Please install jq first."
+    exit 1
+fi
+
 # Load environment variables from .env file if it exists
 if [ -f .env ]; then
     echo "Loading configuration from .env file"
@@ -221,13 +227,20 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
     annotations=""
 
 
-    # Handle different reference types
-    # Handle MR242
-    handle_reference "merge request" "MR[0-9]+" "MR" "https://gitlab.tech.orange/OrangeMoney/Retailer/paymetrics/monorepo/-/merge_requests/%s"
-    # Handle JIRA:OMD-127
-    handle_reference "JIRA ticket" "(JIRA:)?OMD-[0-9]+" "JIRA:" "JIRA: %s"
-    # Handle Git:feat/improve_makefile_auth
-    handle_reference "Git branch" "Git:[^[:space:]]+" "Git:" "Git: %s"
+    # Handle different reference types from config file
+    if [ ! -f "config.json" ]; then
+        echo "Warning: config.json not found, skipping reference handling"
+    else
+        while IFS= read -r ref_config; do
+            # Parse the JSON config line into variables
+            type=$(echo "$ref_config" | jq -r '.type')
+            pattern=$(echo "$ref_config" | jq -r '.pattern')
+            prefix=$(echo "$ref_config" | jq -r '.prefix')
+            url_template=$(echo "$ref_config" | jq -r '.url_template')
+
+            handle_reference "$type" "$pattern" "$prefix" "$url_template"
+        done < <(jq -c '.references[]' config.json)
+    fi
 
     # Extract all @ tags
     # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
