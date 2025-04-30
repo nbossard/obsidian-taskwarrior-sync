@@ -33,10 +33,10 @@ show_help() {
     echo "  --help           Show this help message"
     echo "  --mask PATTERN   File pattern to search (default: *.md)"
     echo "  --project NAME   Assign tasks to a specific project"
+    echo "  --config PATH    Path to references config file (default: config.json)"
     echo
-    echo "Environment Variables:"
-    echo "  OE_MASK         Alternative to --mask (command line takes precedence)"
     echo "  OE_PROJECT      Alternative to --project (command line takes precedence)"
+    echo "  OE_CONFIG       Alternative to --config (command line takes precedence)"
     exit 0
 }
 
@@ -83,6 +83,7 @@ handle_reference() {
 # Set defaults from environment variables or fallback values
 file_mask="${OE_MASK:-*.md}"
 project_name="${OE_PROJECT:-}"
+config_file="${OE_CONFIG:-config.json}"
 
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
@@ -97,13 +98,20 @@ while [[ "$#" -gt 0 ]]; do
                 show_help
                 exit 1
             fi
-            ;;
-        --project)
             shift
             if [[ -n "$1" ]]; then
                 project_name="$1"
             else
                 echo "Error: --project requires a name"
+                show_help
+            fi
+            ;;
+        --config)
+            shift
+            if [[ -n "$1" ]]; then
+                config_file="$1"
+            else
+                echo "Error: --config requires a path"
                 show_help
             fi
             ;;
@@ -117,6 +125,7 @@ echo "Current configuration:"
 echo "~~~~~~~~~~~~~~~~~~~~"
 echo "File mask: $file_mask"
 echo "Project: ${project_name:-<none>}"
+echo "Config file: $config_file"
 echo "Output file: tasks.ndjson"
 echo "~~~~~~~~~~~~~~~~~~~~"
 echo
@@ -228,7 +237,7 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
 
 
     # Handle different reference types from config file
-    if [ ! -f "config.json" ]; then
+    if [ ! -f "$config_file" ]; then
         echo "Warning: config.json not found, skipping reference handling"
     else
         while IFS= read -r ref_config; do
@@ -239,7 +248,7 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
             url_template=$(echo "$ref_config" | jq -r '.url_template')
 
             handle_reference "$type" "$pattern" "$prefix" "$url_template"
-        done < <(jq -c '.references[]' config.json)
+        done < <(jq -c '.references[]' "$config_file")
     fi
 
     # Extract all @ tags

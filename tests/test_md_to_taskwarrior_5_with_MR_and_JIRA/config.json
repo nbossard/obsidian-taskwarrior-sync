@@ -1,0 +1,23 @@
+{
+    "references": [
+        {
+            "type": "merge request",
+            "pattern": "MR[0-9]+",
+            "prefix": "MR",
+            "url_template": "https://gitlab.tech.orange/OrangeMoney/Retailer/paymetrics/monorepo/-/merge_requests/%s"
+        },
+        {
+            "type": "JIRA ticket",
+            "pattern": "(JIRA:)?OMD-[0-9]+",
+            "prefix": "JIRA:",
+            "url_template": "JIRA: %s"
+        },
+        {
+            "type": "Git branch",
+            "pattern": "Git:[^[:space:]]+",
+            "prefix": "Git:",
+            "url_template": "Git: %s"
+        }
+    ]
+}
+
