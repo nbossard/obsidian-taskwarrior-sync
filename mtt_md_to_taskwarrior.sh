@@ -48,6 +48,32 @@ format_date() {
     fi
 }
 
+# Function to add an annotation with proper JSON formatting
+# to global variable "annotations"
+add_annotation() {
+    local url="$1"
+    if [ -n "$annotations" ]; then
+        annotations+=","
+    fi
+    annotations+="{\"description\":\"$url\"}"
+}
+
+# Function to extract and handle different types of references
+# that can be found in description and add them to annotations global var
+handle_reference() {
+    local type="$1" # E.g : "Merge request"
+    local pattern_regex="$2" # E.g.: "MR[0-9]+"
+    local prefix="$3" # E.g. : "MR"
+    local url_template="$4"
+
+    local reference=$(echo "$line" | grep -o -E "$pattern_regex" | head -n 1)
+    if [ -n "$reference" ]; then
+        echo "found $type: $reference"
+        local clean_ref=${reference#$prefix}  # Remove prefix
+        add_annotation "$(printf "$url_template" "$clean_ref")"
+    fi
+}
+
 # Set defaults from environment variables or fallback values
 file_mask="${OE_MASK:-*.md}"
 project_name="${OE_PROJECT:-}"
@@ -190,28 +216,18 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
         echo "converted priority : $priority"
     fi
 
-    ## extract the merge request number and convert it to annotation
-    ## e.g. : "MR414" in description should be converted to annotation :
-    ## {"entry":"20120110T234559Z","description":"https://gitlab.tech.orange/OrangeMoney/Retailer/pilotagedistri/business-server/-/merge_requests/414"}
-    mr_number=$(echo "$line" | grep -o 'MR[0-9]\+' | head -n 1)
-    mr_annotations=""
-    if [ -n "$mr_number" ]; then
-        echo "found merge request: $mr_number"
-        mr_num=${mr_number#MR}  # Remove 'MR' prefix to get just the number
-        mr_annotations="{\"description\":\"https://gitlab.tech.orange/OrangeMoney/Retailer/pilotagedistri/business-server/-/merge_requests/$mr_num\"}"
-    fi
 
-    # Handle JIRA ticket
-    jira_ticket=$(echo "$line" | grep -o -E '(JIRA:)?OMD-[0-9]+' | head -n 1)
-    if [ -n "$jira_ticket" ]; then
-        echo "found JIRA ticket: $jira_ticket"
-        # Remove JIRA: prefix if present
-        clean_ticket=${jira_ticket#JIRA:}
-        if [ -n "$mr_annotations" ]; then
-            mr_annotations+=","
-        fi
-        mr_annotations+="{\"description\":\"https://jira.tech.orange/browse/$clean_ticket\"}"
-    fi
+    # Initialize annotations string
+    annotations=""
+
+
+    # Handle different reference types
+    # Handle MR242
+    handle_reference "merge request" "MR[0-9]+" "MR" "https://gitlab.tech.orange/OrangeMoney/Retailer/paymetrics/monorepo/-/merge_requests/%s"
+    # Handle JIRA:OMD-127
+    handle_reference "JIRA ticket" "(JIRA:)?OMD-[0-9]+" "JIRA:" "JIRA: %s"
+    # Handle Git:feat/improve_makefile_auth
+    handle_reference "Git branch" "Git:[^[:space:]]+" "Git:" "Git: %s"
 
     # Extract all @ tags
     # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
@@ -258,8 +274,8 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
 
     # Add all annotations (source, MR, and JIRA)
     json+=",\"annotations\":[{\"description\":\"Source: $abs_file_path\"}"
-    if [ -n "$mr_annotations" ]; then
-        json+=",$mr_annotations"
+    if [ -n "$annotations" ]; then
+        json+=",$annotations"
     fi
     json+="]"
     json+="}"
