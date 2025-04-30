@@ -125,12 +125,12 @@ echo "mtt - Processing task for file: $source_file"
 
 # Extract task attributes
 description=$(echo "$task_json" | jq -r '.description')
+tags=$(echo "$task_json" | jq -r '.tags // empty | join(",")')
 status=$(echo "$task_json" | jq -r '.status // empty')
 # note start in tasks is wait in taskwarrior
 start_date=$(echo "$task_json" | jq -r '.wait // empty')
 end_date=$(echo "$task_json" | jq -r '.end // empty')
 due_date=$(echo "$task_json" | jq -r '.due // empty')
-tags=$(echo "$task_json" | jq -r '.tags // empty | join(",")')
 uuid=$(echo "$task_json" | jq -r '.uuid // empty')
 priority=$(echo "$task_json" | jq -r '.priority // empty')
 # Convert the depends array to a comma-separated list (no spaces)
