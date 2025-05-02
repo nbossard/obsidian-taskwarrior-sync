@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-- added check that required programs are well available
-- Improved portability of `mtt_sync.sh` script by replacing absolute paths with relative paths based on script location
+## [0.0.6] - 2024-05-02
+
+### Added
+
 - Added script directory detection to make installation location independent
+- Added check that required programs are well available
 - Added tests on tags good working
+
+### Changed
+
+- Improved portability of `mtt_sync.sh` script by replacing absolute paths with relative paths based on script location
 
 ## [0.0.5] - 2024-04-14
 
