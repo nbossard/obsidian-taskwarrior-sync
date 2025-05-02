@@ -5,6 +5,12 @@ echo
 echo "mtt - ------------ starting markdown tasks export -----------------"
 echo
 #
+# Check for required dependencies
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq is required but not installed. Please install jq first."
+    exit 1
+fi
+
 # Load environment variables from .env file if it exists
 if [ -f .env ]; then
     echo "Loading configuration from .env file"
@@ -27,10 +33,10 @@ show_help() {
     echo "  --help           Show this help message"
     echo "  --mask PATTERN   File pattern to search (default: *.md)"
     echo "  --project NAME   Assign tasks to a specific project"
+    echo "  --config PATH    Path to references config file (default: config.json)"
     echo
-    echo "Environment Variables:"
-    echo "  OE_MASK         Alternative to --mask (command line takes precedence)"
     echo "  OE_PROJECT      Alternative to --project (command line takes precedence)"
+    echo "  OE_CONFIG       Alternative to --config (command line takes precedence)"
     exit 0
 }
 
@@ -48,9 +54,36 @@ format_date() {
     fi
 }
 
+# Function to add an annotation with proper JSON formatting
+# to global variable "annotations"
+add_annotation() {
+    local url="$1"
+    if [ -n "$annotations" ]; then
+        annotations+=","
+    fi
+    annotations+="{\"description\":\"$url\"}"
+}
+
+# Function to extract and handle different types of references
+# that can be found in description and add them to annotations global var
+handle_reference() {
+    local type="$1" # E.g : "Merge request"
+    local pattern_regex="$2" # E.g.: "MR[0-9]+"
+    local prefix="$3" # E.g. : "MR"
+    local url_template="$4"
+
+    local reference=$(echo "$line" | grep -o -E "$pattern_regex" | head -n 1)
+    if [ -n "$reference" ]; then
+        echo "found $type: $reference"
+        local clean_ref=${reference#$prefix}  # Remove prefix
+        add_annotation "$(printf "$url_template" "$clean_ref")"
+    fi
+}
+
 # Set defaults from environment variables or fallback values
 file_mask="${OE_MASK:-*.md}"
 project_name="${OE_PROJECT:-}"
+config_file="${OE_CONFIG:-config.json}"
 
 # Parse command line arguments
 while [[ "$#" -gt 0 ]]; do
@@ -65,13 +98,20 @@ while [[ "$#" -gt 0 ]]; do
                 show_help
                 exit 1
             fi
-            ;;
-        --project)
             shift
             if [[ -n "$1" ]]; then
                 project_name="$1"
             else
                 echo "Error: --project requires a name"
+                show_help
+            fi
+            ;;
+        --config)
+            shift
+            if [[ -n "$1" ]]; then
+                config_file="$1"
+            else
+                echo "Error: --config requires a path"
                 show_help
             fi
             ;;
@@ -85,6 +125,7 @@ echo "Current configuration:"
 echo "~~~~~~~~~~~~~~~~~~~~"
 echo "File mask: $file_mask"
 echo "Project: ${project_name:-<none>}"
+echo "Config file: $config_file"
 echo "Output file: tasks.ndjson"
 echo "~~~~~~~~~~~~~~~~~~~~"
 echo
@@ -190,6 +231,26 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
         echo "converted priority : $priority"
     fi
 
+
+    # Initialize annotations string
+    annotations=""
+
+
+    # Handle different reference types from config file
+    if [ ! -f "$config_file" ]; then
+        echo "Warning: config.json not found, skipping reference handling"
+    else
+        while IFS= read -r ref_config; do
+            # Parse the JSON config line into variables
+            type=$(echo "$ref_config" | jq -r '.type')
+            pattern=$(echo "$ref_config" | jq -r '.pattern')
+            prefix=$(echo "$ref_config" | jq -r '.prefix')
+            url_template=$(echo "$ref_config" | jq -r '.url_template')
+
+            handle_reference "$type" "$pattern" "$prefix" "$url_template"
+        done < <(jq -c '.references[]' "$config_file")
+    fi
+
     # Extract all @ tags
     # CONFLICT @ concept does not exist in taskwarrior, doing nothing for now
     # at_tags=$(echo "$line" | grep -o '@[[:alnum:]]\+' | sed 's/@//' | tr '\n' ',' | sed 's/,$//')
@@ -232,7 +293,13 @@ rg --no-heading --line-number --with-filename "^- \\[ \\] "  $file_mask | while 
     [ -n "$project_name" ] && json+=",\"project\":\"$project_name\""
     [ -n "$priority" ] && json+=",\"priority\":\"$priority\""
     [ -n "$all_tags" ] && json+=",\"tags\":[\"$(echo "$all_tags" | sed 's/,/\",\"/g')\"]"
-    json+=",\"annotations\":[{\"description\":\"Source: $abs_file_path\"}]"
+
+    # Add all annotations (source, MR, and JIRA)
+    json+=",\"annotations\":[{\"description\":\"Source: $abs_file_path\"}"
+    if [ -n "$annotations" ]; then
+        json+=",$annotations"
+    fi
+    json+="]"
     json+="}"
 
     echo "$json" >> "$output_file"

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Configurable support of keywords like "MR242" or "JIRA:OMD-3456" to be converted to annotations. Can later be used with taskopen.
+
 ## [0.0.6] - 2024-05-02
 
 ### Added

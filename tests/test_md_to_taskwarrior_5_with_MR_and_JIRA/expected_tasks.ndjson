@@ -1,0 +1,19 @@
+{
+  "description": "write feed the cat process MR242 JIRA:OMD-127 Git:feat/improve_makefile_auth",
+  "status": "pending",
+  "uuid": "16a1d4bb-fec6-416b-be70-6df438a6f44e",
+  "annotations": [
+    {
+      "description": "Source: existing_markdown_file.md"
+    },
+    {
+      "description": "https://gitlab.tech.orange/OrangeMoney/Retailer/paymetrics/monorepo/-/merge_requests/242"
+    },
+    {
+      "description": "JIRA: OMD-127"
+    },
+    {
+      "description": "Git: feat/improve_makefile_auth"
+    }
+  ]
+}
